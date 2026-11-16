@@ -576,7 +576,7 @@ function returnForm(orderId){
 
 /* ============ MÀN HÌNH BÁN HÀNG (POS) ============ */
 const POS={tabs:[],cur:0,n:0,hl:0,res:[]};
-function newSale(){POS.n++;return{title:'Hóa đơn '+POS.n,items:[],partner:'',cid:'',discPct:null,editId:null,channel:'Zalo',date:today(),st:'Mới',track:'',disc:0,ship:0,paid:null,acc:'COD GHTK',note:''}}
+function newSale(){POS.n++;return{title:'Hóa đơn '+POS.n,items:[],partner:'',cid:'',discPct:null,editId:null,channel:'Bán trực tiếp',date:today(),st:'Hoàn thành',track:'',disc:0,ship:0,paid:null,acc:'Tiền mặt',note:''}}
 const sale=()=>POS.tabs[POS.cur];
 function openPOS(preset){
   if(!canWrite||!can('invoice.create'))return toast('Tài khoản của bạn không có quyền bán hàng',1);
