@@ -348,6 +348,7 @@ body.auth main{padding:0}
 .dpk .df{display:flex;align-items:center;gap:8px;border-top:1px solid #eef0f2;margin-top:12px;padding-top:12px}.dpk .df a{color:var(--blue);cursor:pointer;font-weight:500}.dpk .df .sp{flex:1}
 input.dpin{cursor:pointer;background-repeat:no-repeat;background-position:right 8px center;background-size:15px;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='1.8'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E")}
 @media(max-width:600px){.dpk .cals{flex-direction:column;gap:12px}.tbox .pop.pgrid{flex-wrap:wrap;width:calc(100vw - 40px)}}
+.sheet.wide{max-width:none;padding:24px 22px 30px}.sheet.wide table{font-size:12.5px}.sheet.wide th,.sheet.wide td{padding:8px 7px}.sheet.wide td:first-child,.sheet.wide th:first-child{white-space:nowrap}
 </style>
 </head>
 <body>
@@ -868,7 +869,7 @@ const F={pg:0,pp:15,exp:null,xt:'info',sel:new Set(),pop:null,
   rP:'month',rFrom:'',rTo:'',rSt:['Đã trả'],rQ:'',
   cQ:'',cDebt:'all',cTP:'all',cTFrom:'',cTTo:'',
   qAcc:'Tiền mặt',qP:'month',qFrom:'',qTo:'',qType:[],qCat:'',qSt:['Đã thanh toán'],qQ:'',
-  rpP:'month',rpFrom:'',rpTo:'',rpView:'report',rpMq:{},rpDay:'',
+  rpP:'month',rpFrom:'',rpTo:'',finMode:'custom',finBy:'month',finYear:new Date().getFullYear(),rpView:'report',rpMq:{},rpDay:'',
   dP:'month',dMode:'day',tP:'month',tBy:'rev',cuP:'month'};
 const rangeOf=k=>F[k+'P']==='custom'?[F[k+'From']||'0000-00-00',F[k+'To']||'9999-12-31']:periodRange(F[k+'P']);
 const plabel=p=>(PERIODS.find(x=>x[0]===p)||[,''])[1];
@@ -1140,24 +1141,36 @@ const RP={
   os.forEach(o=>{const c=g(o.channel);c.n++;c.rev+=rev(o);c.cost+=cogs(o)});rs.forEach(x=>{const o=S.orders.get(x.orderId),c=g(o?o.channel:'Khác');c.ret+=+x.total||0;c.rcost+=rcogs(x)});const l=Object.entries(m).sort((a,b)=>(b[1].rev-b[1].ret)-(a[1].rev-a[1].ret)),tot=sum(l,x=>x[1].rev-x[1].ret);
   return{title:'Báo cáo bán hàng theo kênh bán',hchart:l.map(([k,v])=>({name:k,v:v.rev-v.ret})),cols:[['Kênh bán'],['Số hóa đơn','r'],['Doanh thu','r'],['Giá trị trả','r'],['Doanh thu thuần','r'],['Tỷ trọng','r'],...(isOwner?[['Lợi nhuận gộp','r']]:[])],
     total:['Tổng',sum(l,x=>x[1].n),sum(l,x=>x[1].rev),sum(l,x=>x[1].ret),tot,'100%',...(isOwner?[sum(l,x=>x[1].rev-x[1].ret-x[1].cost+x[1].rcost)]:[])],rows:l.map(([k,v])=>[k,v.n,v.rev,v.ret,v.rev-v.ret,(tot?Math.round((v.rev-v.ret)/tot*100):0)+'%',...(isOwner?[v.rev-v.ret-v.cost+v.rcost]:[])])}}},
-'bc-tai-chinh':{title:'Báo cáo tài chính',owner:1,mq:[['kq','Kết quả hoạt động kinh doanh']],build(){const r=rangeOf('rp');
-  const months=[];if(r[0]>'0000'&&r[1]<'9999'){const a=new Date(r[0]+'T00:00:00'),b=new Date(r[1]+'T00:00:00');const d=new Date(a.getFullYear(),a.getMonth(),1);while(d<=b&&months.length<12){months.push(ymd(d).slice(0,7));d.setMonth(d.getMonth()+1)}if(months.length<2)months.length=0}
+'bc-tai-chinh':{title:'Báo cáo tài chính',owner:1,chart:1,mq:[['kq','Kết quả hoạt động kinh doanh']],build(){const fc=finCols(),r=fc.total;
   const per=rr=>{const {os,rs}=liveIn(rr),ex=expCash(rr),oi=otherIn(rr),g=sum(os,o=>o.goods),dc=sum(os,o=>o.discount),rt=sum(rs,x=>x.total),net=g-dc-rt,cg=sum(os,cogs)-sum(rs,rcogs),gp=net-cg,cats={};ex.forEach(c=>{cats[c.category]=(cats[c.category]||0)+(+c.amount||0)});const E=sum(ex,c=>c.amount),sh=sum(os,o=>o.ship),ot=sum(oi,c=>c.amount);return{g,dc,rt,net,cg,gp,cats,E,sh,ot,np:gp-E+sh+ot}};
-  const cols=[r,...months.map(m=>{const s=m+'-01',e=ymd(new Date(+m.slice(0,4),+m.slice(5,7),0));return[s<r[0]?r[0]:s,e>r[1]?r[1]:e]})].map(per);
+  const months=fc.cols,cols=[r,...fc.cols.map(c=>c.r)].map(per);
   const allCats=[...new Set(cols.flatMap(c=>Object.keys(c.cats)))];
   const row=(l,f,cls)=>({cls,r:[l,...months.map((_,i)=>f(cols[i+1])),f(cols[0])]});
   const rows=[row('Doanh thu bán hàng (1)',c=>c.g),row('Giảm trừ doanh thu (2 = 2.1 + 2.2)',c=>c.dc+c.rt),row('Chiết khấu hóa đơn (2.1)',c=>c.dc,'ind'),row('Giá trị hàng bán bị trả lại (2.2)',c=>c.rt,'ind'),row('Doanh thu thuần (3 = 1 - 2)',c=>c.net,'tt'),row('Giá vốn hàng bán (4)',c=>c.cg),row('Lợi nhuận gộp về bán hàng (5 = 3 - 4)',c=>c.gp,'tt'),row('Chi phí (6)',c=>c.E),...allCats.map(k=>row(k,c=>c.cats[k]||0,'ind')),row('Thu nhập khác (7)',c=>c.sh+c.ot),row('Phí ship thu khách',c=>c.sh,'ind'),row('Phiếu thu khác',c=>c.ot,'ind'),row('Lợi nhuận thuần (8 = 5 - 6 + 7)',c=>c.np,'tt')];
-  return{title:'Báo cáo kết quả hoạt động kinh doanh',cols:[['Chỉ tiêu'],...months.map(m=>['Tháng '+m.slice(5,7)+'/'+m.slice(0,4),'r']),['Tổng','r']],rows:rows.map(x=>x.r),rowCls:rows.map(x=>x.cls||'')}}}
+  return{title:'Báo cáo kết quả hoạt động kinh doanh',cols:[['Chỉ tiêu'],...months.map(m=>[m.label,'r']),['Tổng','r']],chart:(()=>{const cs=[...months].reverse(),vs=cs.map((m,i)=>cols[months.length-i].np);return cs.length?{labels:cs.map(m=>m.label),values:vs,tips:cs.map(m=>m.label)}:{labels:['Tổng'],values:[cols[0].np],tips:[fd(r[0])+' - '+fd(r[1])]}})(),sub:fc.sub,rows:rows.map(x=>x.r),rowCls:rows.map(x=>x.cls||'')}}}
 };
 function reportPage(){const def=RP[tab],mqList=typeof def.mq==='function'?def.mq():def.mq;let mq=F.rpMq[tab]||mqList[0][0];if(!mqList.find(x=>x[0]===mq))mq=mqList[0][0];
   if(def.owner&&!isOwner)return `<div class="dcard">${empty('Tài khoản của bạn không được xem lợi nhuận, giá vốn.')}</div>`;
   const Rr=def.build(mq),r=rangeOf('rp');
-  const sub=def.day?'Ngày '+fd(F.rpDay||today()):'Từ ngày '+(F.rpP==='all'?'đầu':fd(r[0]))+' đến ngày '+(F.rpP==='all'?'nay':fd(r[1]>today()?today():r[1]));
+  const sub=Rr.sub?Rr.sub:def.day?'Ngày '+fd(F.rpDay||today()):'Từ ngày '+(F.rpP==='all'?'đầu':fd(r[0]))+' đến ngày '+(F.rpP==='all'?'nay':fd(r[1]>today()?today():r[1]));
   if(def.chart&&F.rpView==='chart'&&(Rr.chart||Rr.hchart))return `<div class="dcard" style="margin-top:12px"><div class="dh"><h3>${Rr.title}</h3><span class="sp"></span><span class="mut">${sub}</span></div>${Rr.chart?(Rr.chart.values.length?barChart(Rr.chart.labels,Rr.chart.values,Rr.chart.tips):empty('Không có dữ liệu')):hChart(Rr.hchart,short)}</div>`;
   const cell=v=>typeof v==='number'?fm(v):h(v);
-  return `<div class="rbox"><div class="sheet"><div class="made">Ngày lập: ${fd(today())} ${hm(Date.now())}</div><h2>${Rr.title}</h2><div class="rg">${sub}<br>Chi nhánh trung tâm</div>
+  return `<div class="rbox"><div class="sheet${Rr.cols.length>5?' wide':''}"><div class="made">Ngày lập: ${fd(today())} ${hm(Date.now())}</div><h2>${Rr.title}</h2><div class="rg">${sub}<br>Chi nhánh trung tâm</div>
   <table><thead><tr>${Rr.cols.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${Rr.total&&Rr.rows.length?`<tr class="tt">${Rr.total.map((v,i)=>`<td class="${Rr.cols[i][1]||''}">${cell(v)}</td>`).join('')}</tr>`:''}${Rr.rows.length?Rr.rows.map((row,k)=>`<tr class="${Rr.rowCls?Rr.rowCls[k]:''}">${row.map((v,i)=>`<td class="${Rr.cols[i][1]||''}">${cell(v)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${Rr.cols.length}" style="text-align:center;padding:20px" class="mut">Báo cáo không có dữ liệu</td></tr>`}</tbody></table></div></div>`}
-function reportFilters(){const def=RP[tab],mqList=typeof def.mq==='function'?def.mq():def.mq,mq=F.rpMq[tab]||mqList[0][0];
+function finCols(){const n=new Date(),cy=n.getFullYear(),cm=n.getMonth()+1;
+  if(F.finMode!=='period'){const r=rangeOf('rp');return{total:r,cols:[],sub:null}}
+  const Y=+F.finYear||cy,cols=[];
+  if(F.finBy==='year'){const ys=[...new Set(vals('orders').map(o=>+String(o.date).slice(0,4)).filter(Boolean))];if(!ys.includes(cy))ys.push(cy);const y0=Math.min(...ys);for(let y=cy;y>=y0;y--)cols.push({label:String(y),r:[y+'-01-01',y+'-12-31']});return{total:[y0+'-01-01',cy+'-12-31'],cols,sub:'Từ năm '+y0+' đến năm '+cy}}
+  const lastM=Y<cy?12:Y>cy?0:cm;
+  if(F.finBy==='quarter'){for(let q=Math.ceil(lastM/3);q>=1;q--)cols.push({label:'Q'+q+'.'+Y,r:[ymd(new Date(Y,q*3-3,1)),ymd(new Date(Y,q*3,0))]})}
+  else for(let m=lastM;m>=1;m--)cols.push({label:'T'+m+'.'+Y,r:[ymd(new Date(Y,m-1,1)),ymd(new Date(Y,m,0))]});
+  return{total:[Y+'-01-01',Y+'-12-31'],cols,sub:'Năm '+Y}}
+function finFilters(){const cy=new Date().getFullYear(),ys=[...new Set(vals('orders').map(o=>+String(o.date).slice(0,4)).filter(Boolean).concat([cy]))].sort((a,b)=>b-a),per=F.finMode==='period',r=rangeOf('rp'),BY=[['month','Theo Tháng'],['quarter','Theo Quý'],['year','Theo Năm']];
+  return `<div class="fs"><div class="ft">Kiểu hiển thị</div><div class="pills"><span data-act="pill" data-k="rpView" data-v="chart" class="${F.rpView==='chart'?'on':''}">Biểu đồ</span><span data-act="pill" data-k="rpView" data-v="report" class="${F.rpView!=='chart'?'on':''}">Báo cáo</span></div></div>
+  <div class="fs"><div class="ft">Thời gian</div><select data-f="finYear" style="margin-bottom:8px">${ys.map(y=>`<option value="${y}"${+F.finYear===y?' selected':''}>${y}</option>`).join('')}</select>
+  <div class="trow"><input type="radio" name="finm" data-act="finmode" data-v="period"${per?' checked':''}><div class="tbox" data-act="finpop"><span>${(BY.find(x=>x[0]===F.finBy)||BY[0])[1]}</span><span>›</span>${F.pop==='fin'?`<div class="pop pgrid"><div class="pg">${BY.map(([v,l])=>`<span data-act="finby" data-v="${v}" class="${per&&F.finBy===v?'cur':''}">${l}</span>`).join('')}</div></div>`:''}</div></div>
+  <div class="trow"><input type="radio" name="finm" data-act="finmode" data-v="custom"${per?'':' checked'}><div class="tbox" data-act="tcus" data-k="rp"><span>${per?'Tùy chỉnh':fd(r[0])+' - '+fd(r[1])}</span><span class="calic"></span></div></div></div>`}
+function reportFilters(){const def=RP[tab],mqList=typeof def.mq==='function'?def.mq():def.mq,mq=F.rpMq[tab]||mqList[0][0];if(tab==='bc-tai-chinh')return finFilters();
   return(def.chart?`<div class="fs"><div class="ft">Kiểu hiển thị</div><div class="pills"><span data-act="pill" data-k="rpView" data-v="chart" class="${F.rpView==='chart'?'on':''}">Biểu đồ</span><span data-act="pill" data-k="rpView" data-v="report" class="${F.rpView!=='chart'?'on':''}">Báo cáo</span></div></div>`:'')
   +`<div class="fs"><div class="ft">Mối quan tâm</div>${mqList.map(([v,l])=>`<label class="opt"><input type="radio" name="rmq" data-act="rmq" value="${v}"${mq===v?' checked':''}> ${l}</label>`).join('')}</div>`
   +(def.day?`<div class="fs"><div class="ft">Thời gian</div><input type="date" data-f="rpDay" value="${F.rpDay||today()}"></div>`:timeF('rp'))}
@@ -1373,7 +1386,7 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.who')){const um=$('#umenu');if(um)um.classList.add('hidden')}
   if(e.target.closest('#pos,#modal'))return;
   const b=e.target.closest('[data-act]');
-  if(F.pop&&!(b&&(b.dataset.act==='tpop'||b.dataset.act==='tset'))){F.pop=null;renderSide()}
+  if(F.pop&&!(b&&['tpop','tset','finpop','finby'].includes(b.dataset.act))){F.pop=null;renderSide()}
   if(!b){const row=e.target.closest('tr[data-row]');if(row&&!e.target.closest('input,select,button,a,textarea')){F.exp=F.exp===row.dataset.row?null:row.dataset.row;F.xt='info';renderBody()}if(!e.target.closest('.srch'))document.querySelectorAll('#ed-dd').forEach(d=>d.classList.add('hidden'));return}
   const id=b.dataset.id,act=b.dataset.act;
   if(ACT_PERM[act]&&!can(ACT_PERM[act]))return toast('Tài khoản của bạn không có quyền thực hiện thao tác này',1);
@@ -1386,7 +1399,10 @@ document.addEventListener('click',e=>{
    case 'new-role':return roleForm();case 'edit-role':return roleForm(id);case 'copy-role':return roleForm(id,true);
    case 'tpop':F.pop=F.pop===b.dataset.k?null:b.dataset.k;renderSide();return;
    case 'tset':{const k=b.dataset.k;F[k+'P']=b.dataset.v;F.pop=null;F.pg=0;renderSide();renderBody();return}
-   case 'tcus':{const k=b.dataset.k,r=rangeOf(k);return rangePicker(b,F[k+'P']==='custom'?F[k+'From']:r[0],F[k+'P']==='custom'?F[k+'To']:r[1],(a,c)=>{F[k+'P']='custom';F[k+'From']=a;F[k+'To']=c;F.pg=0;renderSide();renderBody()})}
+   case 'finpop':F.pop=F.pop==='fin'?null:'fin';renderSide();return;
+   case 'finby':F.finBy=b.dataset.v;F.finMode='period';F.pop=null;renderSide();renderBody();return;
+   case 'finmode':{if(b.dataset.v==='custom'){F.finMode='custom';renderSide();renderBody();return}F.finMode='period';renderSide();renderBody();return}
+   case 'tcus':{const k=b.dataset.k,r=rangeOf(k);return rangePicker(b,F[k+'P']==='custom'?F[k+'From']:r[0],F[k+'P']==='custom'?F[k+'To']:r[1],(a,c)=>{if(k==='rp')F.finMode='custom';F[k+'P']='custom';F[k+'From']=a;F[k+'To']=c;F.pg=0;renderSide();renderBody()})}
    case 'pill':F[b.dataset.k]=b.dataset.v;F.pg=0;renderSide();renderBody();return;
    case 'pg':F.pg+=+b.dataset.v;F.exp=null;renderBody();return;
    case 'xt':F.xt=b.dataset.v;renderBody();return;
