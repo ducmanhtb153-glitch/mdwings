@@ -940,6 +940,9 @@ function productsList(){const q=F.prQ.trim().toLowerCase(),tr=rangeOf('prT'),er=
    &&(!sm||[...(sm[p.id]||[])].some(n=>F.prSups.includes(n)))&&(!F.prBrands.length||F.prBrands.includes(p.brand))&&(!F.prLocs.length||F.prLocs.includes(p.location||'Không có vị trí'))
    &&(!F.prKinds.length||F.prKinds.includes(prKind(p)))&&(F.prDirect==='all'||(F.prDirect==='yes')===(p.directSale!==false))&&(F.prLinked==='all'||(F.prLinked==='yes')===!!p.linked)
    &&(!q||(p.sku+' '+p.name).toLowerCase().includes(q))}).sort(byTime)}
+function ordersList(){const r=rangeOf('o'),q=F.oQ.trim().toLowerCase();let payIds=null;if(F.oPay){payIds=new Set();for(const c of S.cash.values())if(c.orderId&&!c.canceled&&c.account===F.oPay)payIds.add(c.orderId)}
+  return vals('orders').filter(mine).filter(o=>{const hasR=!!(D.ordRet[o.id]||[]).length;return inR(o.date,r)&&F.oSt.includes(o.status)&&F.oRet.includes(hasR?'Có trả hàng':'Không trả hàng')&&(!F.oCh||o.channel===F.oCh)&&(!payIds||payIds.has(o.id))&&(!q||(o.code+' '+(o.cname||'')+' '+(o.ccode||'')+' '+(o.tracking||'')+' '+(o.items||[]).map(i=>i.name+' '+i.sku).join(' ')).toLowerCase().includes(q))}).sort(byTime)}
+function purchasesList(){const r=rangeOf('p'),q=F.pQ.trim().toLowerCase();return vals('purchases').filter(mine).filter(p=>inR(p.date,r)&&F.pSt.includes(p.canceled?'Đã hủy':'Đã nhập hàng')&&(!F.pSup||p.sname===F.pSup)&&(!q||(p.code+' '+p.sname+' '+(p.items||[]).map(i=>i.name+' '+i.sku).join(' ')).toLowerCase().includes(q))).sort(byTime)}
 const retKind=x=>x.kind||(x.orderId||x.orderCode?'Theo hóa đơn':'Trả nhanh');
 const retBy=x=>{const u=x.createdBy&&S.appusers.get(x.createdBy);return x.createdByName||(u?u.name:'')};
 const retRecv=x=>x.receiverName||retBy(x);
