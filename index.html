@@ -476,6 +476,8 @@ function cashForm(pre={}){
   </div></div>
   <div class="mf"><button class="btn" data-close>Bỏ qua</button><button class="btn pri" id="c-save">Lưu</button></div>`,root=>{
     moneyFmt(root);
+    const kqDef=()=>{if($('#c-pt').value){$('#c-kq').checked=false;return}const cat=$('#c-cat').value.trim();let last=null;for(const c of S.cash.values())if(!c.canceled&&c.category===cat&&!c.partnerType&&(!last||(c.createdAt||0)>(last.createdAt||0)))last=c;if(last)$('#c-kq').checked=last.kqkd!==false};
+    if(!pre.partnerType&&pre.kqkd===undefined)kqDef();$('#c-cat').addEventListener('change',kqDef);$('#c-cat').addEventListener('input',kqDef);$('#c-pt').addEventListener('change',kqDef);
     const setDl=()=>{const v=$('#c-pt').value;$('#c-pn').setAttribute('list',v==='customer'?'dl-customers':v==='supplier'?'dl-suppliers':'')};setDl();$('#c-pt').onchange=setDl;
     $('#c-save').onclick=e=>run(e.target,async()=>{
       const amt=pm($('#c-amt').value);if(amt<=0)return toast('Nhập giá trị phiếu',1);
