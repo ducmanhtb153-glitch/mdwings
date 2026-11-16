@@ -335,20 +335,21 @@ body.auth main{padding:0}
 .pgrid .pgt{font-size:12.5px;font-weight:600;color:#15171a;padding:0!important;margin-bottom:2px}
 .pgrid .pg span{border:1px solid #d9dce1;border-radius:16px;padding:4px 10px;font-size:12.5px;white-space:nowrap;cursor:pointer}.pgrid .pg span:hover{border-color:var(--blue);color:var(--blue)}.pgrid .pg span.cur{background:var(--blue);border-color:var(--blue);color:#fff}
 .calic{width:16px;height:16px;flex:none;background:no-repeat center/16px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b4046' stroke-width='1.8'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2'/%3E%3C/svg%3E")}
-.dpk{position:fixed;z-index:95;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);padding:14px 16px 12px;font-size:14px;user-select:none}
-.dpk .dh{color:#3b4046;margin-bottom:12px}.dpk .dh b{color:#15171a}
-.dpk .cals{display:flex;gap:28px}.dpk .cal{width:224px}
-.dpk .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.dpk .ch span{font-size:13.5px;color:#3b4046}
+.dpk{position:fixed;z-index:95;background:#fff;border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.2);padding:18px 18px 14px;font-size:14px;user-select:none}
+.dpk .dh{color:#3b4046;margin-bottom:16px;font-size:14.5px}.dpk .dh b{color:#15171a}
+.dpk .cals{display:flex;gap:36px}.dpk .cal{width:270px}
+.dpk .ch{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;margin-bottom:6px;border-bottom:1px solid #eef0f2}.dpk .ch span{font-size:13.5px;color:#3b4046}
 .dpk .ch b{width:22px;height:22px;border:1px solid #d9dce1;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:400;color:#3b4046}.dpk .ch b:hover{border-color:var(--blue);color:var(--blue)}
-.dpk .cg{display:grid;grid-template-columns:repeat(7,32px);row-gap:6px;column-gap:0}
-.dpk .cg i{font-style:normal;font-size:12.5px;color:#8a9099;text-align:center;height:24px;line-height:24px}
-.dpk .cg span{width:30px;height:30px;line-height:30px;text-align:center;border-radius:50%;cursor:pointer;color:#15171a;margin:0 1px}
+.dpk .cg{display:grid;grid-template-columns:repeat(7,1fr);row-gap:10px;justify-items:center}
+.dpk .cg i{font-style:normal;font-size:13.5px;color:#8a9099;text-align:center;height:28px;line-height:28px}
+.dpk .cg span{width:36px;height:36px;line-height:36px;text-align:center;border-radius:50%;cursor:pointer;color:#15171a;font-size:14.5px}.dpk .cg span.nx{cursor:default;visibility:hidden}
 .dpk .cg span:hover{background:#e6f1fe}.dpk .cg span.out{color:#a8adb4}.dpk .cg span.td{color:var(--blue);font-weight:600}
-.dpk .cg span.rng{background:#eef5ff;border-radius:6px}.dpk .cg span.sel{background:var(--blue);color:#fff;font-weight:600}
-.dpk .df{display:flex;align-items:center;gap:8px;border-top:1px solid #eef0f2;margin-top:12px;padding-top:12px}.dpk .df a{color:var(--blue);cursor:pointer;font-weight:500}.dpk .df .sp{flex:1}
+.dpk .cg span.sel{background:var(--blue);color:#fff;font-weight:600}
+.dpk .df{display:flex;align-items:center;gap:10px;border-top:1px solid #eef0f2;margin:16px -18px 0;padding:14px 18px 0}.dpk .df a{color:var(--blue);cursor:pointer;font-weight:500}.dpk .df .sp{flex:1}
 input.dpin{cursor:pointer;background-repeat:no-repeat;background-position:right 8px center;background-size:15px;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='1.8'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E")}
 @media(max-width:600px){.dpk .cals{flex-direction:column;gap:12px}.tbox .pop.pgrid{flex-wrap:wrap;width:calc(100vw - 40px)}}
 .sheet.wide{max-width:none;padding:24px 22px 30px}.sheet.wide table{font-size:12.5px}.sheet.wide th,.sheet.wide td{padding:8px 7px}.sheet.wide td:first-child,.sheet.wide th:first-child{white-space:nowrap}
+.tbox>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 </style>
 </head>
 <body>
@@ -436,23 +437,23 @@ const inR=(d,r)=>d>=r[0]&&d<=r[1];
 const DOW=['T2','T3','T4','T5','T6','T7','CN'];
 function calGrid(ym,opt){const y=+ym.slice(0,4),m=+ym.slice(5,7)-1,first=new Date(y,m,1),off=(first.getDay()+6)%7,start=new Date(y,m,1-off),cells=[];
   const last=new Date(y,m+1,0).getDate(),rows=Math.ceil((off+last)/7);
-  for(let i=0;i<rows*7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const s=ymd(d),inM=d.getMonth()===m;
+  for(let i=0;i<rows*7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const s=ymd(d),inM=d.getMonth()===m;if((opt.max&&s>opt.max)||(opt.min&&s<opt.min)||(!inM&&d>first)){cells.push('<span class="nx"></span>');continue}
     const cls=[inM?'':'out',s===today()?'td':'',opt.sel.includes(s)?'sel':'',opt.a&&opt.b&&s>opt.a&&s<opt.b&&inM?'rng':'',(d.getDay()===0||d.getDay()===6)&&inM?'we':''].filter(Boolean).join(' ');
     cells.push(`<span class="${cls}" data-dpd="${s}" data-side="${opt.side}">${d.getDate()}</span>`)}
   return `<div class="cal"><div class="ch"><b data-dpn="-1" data-side="${opt.side}">‹</b><span>Tháng ${m+1} ${y}</span><b data-dpn="1" data-side="${opt.side}">›</b></div><div class="cg">${DOW.map(x=>`<i>${x}</i>`).join('')}${cells.join('')}</div></div>`}
 const addMon=(ym,k)=>{const d=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+k,1);return ymd(d).slice(0,7)};
-function dpOpen(anchor,html,onClick){dpClose();const el=document.createElement('div');el.className='dpk';el.id='dpk';el.innerHTML=html();document.body.appendChild(el);
-  const place=()=>{const r=anchor.getBoundingClientRect(),w=el.offsetWidth,hh=el.offsetHeight;let top=r.bottom+6;if(top+hh>innerHeight-8)top=Math.max(8,r.top-hh-6);el.style.top=top+'px';el.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px'};place();
+function dpOpen(anchor,html,onClick,side){dpClose();const el=document.createElement('div');el.className='dpk';el.id='dpk';el.innerHTML=html();document.body.appendChild(el);
+  const place=()=>{const r=anchor.getBoundingClientRect(),w=el.offsetWidth,hh=el.offsetHeight;let top,left;if(side&&r.right+8+w<innerWidth-8){left=r.right+8;top=Math.max(8,Math.min(r.top-215,innerHeight-hh-8))}else{top=r.bottom+6;if(top+hh>innerHeight-8)top=Math.max(8,r.top-hh-6);left=Math.max(8,Math.min(innerWidth-w-8,r.left))}el.style.top=top+'px';el.style.left=left+'px'};place();
   el.addEventListener('click',e=>{e.stopPropagation();const done=onClick(e);if(done===true)dpClose();else{el.innerHTML=html();place()}});
   setTimeout(()=>document.addEventListener('mousedown',dpOut,true),0)}
 function dpOut(e){const el=$('#dpk');if(el&&!el.contains(e.target))dpClose()}
 function dpClose(){const el=$('#dpk');if(el)el.remove();document.removeEventListener('mousedown',dpOut,true)}
-function rangePicker(anchor,from,to,onApply){let a=from&&from>'0000-00-00'?from:today(),b=to&&to<'9999-12-31'?to:today(),lm=a.slice(0,7),rm=b.slice(0,7);if(rm===lm)rm=lm;
-  dpOpen(anchor,()=>`<div class="dh">Từ ngày: <b>${fd(a)}</b> - Đến ngày: <b>${fd(b)}</b></div><div class="cals">${calGrid(lm,{sel:[a],a,b,side:'L'})}${calGrid(rm,{sel:[b],a,b,side:'R'})}</div><div class="df"><a data-dpa="today">Hôm nay</a><span class="sp"></span><button class="btn" data-dpa="cancel">Bỏ qua</button><button class="btn pri" data-dpa="ok">Áp dụng</button></div>`,e=>{
+function rangePicker(anchor,from,to,onApply,o={}){const T=today();let a=from&&from>'0000-00-00'?from:T,b=to&&to<'9999-12-31'?to:T;if(a>T)a=T;if(b>T)b=T;if(b<a)b=a;let lm=a.slice(0,7),rm=b.slice(0,7);
+  dpOpen(anchor,()=>`<div class="dh">Từ ngày: <b>${fd(a)}</b> - Đến ngày: <b>${fd(b)}</b></div><div class="cals">${calGrid(lm,{sel:[a],a,b,side:'L',max:T})}${calGrid(rm,{sel:[b],a,b,side:'R',min:a,max:T})}</div><div class="df"><a data-dpa="today">Hôm nay</a><span class="sp"></span><button class="btn" data-dpa="cancel">Bỏ qua</button><button class="btn pri" data-dpa="ok">${o.okLabel||'Áp dụng'}</button></div>`,e=>{
     const t=e.target,n=t.closest('[data-dpn]'),d=t.closest('[data-dpd]'),ac=t.closest('[data-dpa]');
     if(n){if(n.dataset.side==='L')lm=addMon(lm,+n.dataset.dpn);else rm=addMon(rm,+n.dataset.dpn);return}
-    if(d){const v=d.dataset.dpd;if(d.dataset.side==='L'){a=v;if(a>b)b=a;lm=v.slice(0,7)}else{b=v;if(b<a)a=b;rm=v.slice(0,7)}return}
-    if(ac){if(ac.dataset.dpa==='today'){a=b=today();lm=rm=a.slice(0,7);return}if(ac.dataset.dpa==='cancel')return true;onApply(a,b);return true}})}
+    if(d){const v=d.dataset.dpd;if(d.dataset.side==='L'){a=v;if(a>b)b=a;lm=v.slice(0,7);if(rm<lm)rm=lm}else{b=v;if(b<a)a=b;rm=v.slice(0,7)}return}
+    if(ac){if(ac.dataset.dpa==='today'){a=b=T;lm=rm=a.slice(0,7);return}if(ac.dataset.dpa==='cancel')return true;onApply(a,b);return true}},o.side)}
 function datePicker(anchor,val,onPick){let v=val||today(),m=v.slice(0,7);
   dpOpen(anchor,()=>`<div class="cals one">${calGrid(m,{sel:[v],side:'S'})}</div><div class="df"><a data-dpa="today">Hôm nay</a><span class="sp"></span><button class="btn" data-dpa="cancel">Bỏ qua</button></div>`,e=>{
     const t=e.target,n=t.closest('[data-dpn]'),d=t.closest('[data-dpd]'),ac=t.closest('[data-dpa]');
@@ -1157,16 +1158,18 @@ function reportPage(){const def=RP[tab],mqList=typeof def.mq==='function'?def.mq
   const cell=v=>typeof v==='number'?fm(v):h(v);
   return `<div class="rbox"><div class="sheet${Rr.cols.length>5?' wide':''}"><div class="made">Ngày lập: ${fd(today())} ${hm(Date.now())}</div><h2>${Rr.title}</h2><div class="rg">${sub}<br>Chi nhánh trung tâm</div>
   <table><thead><tr>${Rr.cols.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${Rr.total&&Rr.rows.length?`<tr class="tt">${Rr.total.map((v,i)=>`<td class="${Rr.cols[i][1]||''}">${cell(v)}</td>`).join('')}</tr>`:''}${Rr.rows.length?Rr.rows.map((row,k)=>`<tr class="${Rr.rowCls?Rr.rowCls[k]:''}">${row.map((v,i)=>`<td class="${Rr.cols[i][1]||''}">${cell(v)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${Rr.cols.length}" style="text-align:center;padding:20px" class="mut">Báo cáo không có dữ liệu</td></tr>`}</tbody></table></div></div>`}
+function finRange(){return F.rpP==='custom'?rangeOf('rp'):[monthStart(),today()]}
 function finCols(){const n=new Date(),cy=n.getFullYear(),cm=n.getMonth()+1;
-  if(F.finMode!=='period'){const r=rangeOf('rp');return{total:r,cols:[],sub:null}}
+  if(F.finMode!=='period'){const r=finRange();return{total:r,cols:[],sub:null}}
   const Y=+F.finYear||cy,cols=[];
   if(F.finBy==='year'){const ys=[...new Set(vals('orders').map(o=>+String(o.date).slice(0,4)).filter(Boolean))];if(!ys.includes(cy))ys.push(cy);const y0=Math.min(...ys);for(let y=cy;y>=y0;y--)cols.push({label:String(y),r:[y+'-01-01',y+'-12-31']});return{total:[y0+'-01-01',cy+'-12-31'],cols,sub:'Từ năm '+y0+' đến năm '+cy}}
   const lastM=Y<cy?12:Y>cy?0:cm;
   if(F.finBy==='quarter'){for(let q=Math.ceil(lastM/3);q>=1;q--)cols.push({label:'Q'+q+'.'+Y,r:[ymd(new Date(Y,q*3-3,1)),ymd(new Date(Y,q*3,0))]})}
   else for(let m=lastM;m>=1;m--)cols.push({label:'T'+m+'.'+Y,r:[ymd(new Date(Y,m-1,1)),ymd(new Date(Y,m,0))]});
   return{total:[Y+'-01-01',Y+'-12-31'],cols,sub:'Năm '+Y}}
-function finFilters(){const cy=new Date().getFullYear(),ys=[...new Set(vals('orders').map(o=>+String(o.date).slice(0,4)).filter(Boolean).concat([cy]))].sort((a,b)=>b-a),per=F.finMode==='period',r=rangeOf('rp'),BY=[['month','Theo Tháng'],['quarter','Theo Quý'],['year','Theo Năm']];
-  return `<div class="fs"><div class="ft">Kiểu hiển thị</div><div class="pills"><span data-act="pill" data-k="rpView" data-v="chart" class="${F.rpView==='chart'?'on':''}">Biểu đồ</span><span data-act="pill" data-k="rpView" data-v="report" class="${F.rpView!=='chart'?'on':''}">Báo cáo</span></div></div>
+function finFilters(){const cy=new Date().getFullYear(),ys=[...new Set(vals('orders').map(o=>+String(o.date).slice(0,4)).filter(Boolean).concat([cy]))].sort((a,b)=>b-a),per=F.finMode==='period',r=finRange(),BY=[['month','Theo Tháng'],['quarter','Theo Quý'],['year','Theo Năm']];
+  if(!per&&F.rpView==='chart')F.rpView='report';
+  return `<div class="fs"><div class="ft">Kiểu hiển thị</div><div class="pills">${per?`<span data-act="pill" data-k="rpView" data-v="chart" class="${F.rpView==='chart'?'on':''}">Biểu đồ</span>`:''}<span data-act="pill" data-k="rpView" data-v="report" class="${F.rpView!=='chart'?'on':''}">Báo cáo</span></div></div>
   <div class="fs"><div class="ft">Thời gian</div><select data-f="finYear" style="margin-bottom:8px">${ys.map(y=>`<option value="${y}"${+F.finYear===y?' selected':''}>${y}</option>`).join('')}</select>
   <div class="trow"><input type="radio" name="finm" data-act="finmode" data-v="period"${per?' checked':''}><div class="tbox" data-act="finpop"><span>${(BY.find(x=>x[0]===F.finBy)||BY[0])[1]}</span><span>›</span>${F.pop==='fin'?`<div class="pop pgrid"><div class="pg">${BY.map(([v,l])=>`<span data-act="finby" data-v="${v}" class="${per&&F.finBy===v?'cur':''}">${l}</span>`).join('')}</div></div>`:''}</div></div>
   <div class="trow"><input type="radio" name="finm" data-act="finmode" data-v="custom"${per?'':' checked'}><div class="tbox" data-act="tcus" data-k="rp"><span>${per?'Tùy chỉnh':fd(r[0])+' - '+fd(r[1])}</span><span class="calic"></span></div></div></div>`}
@@ -1402,7 +1405,7 @@ document.addEventListener('click',e=>{
    case 'finpop':F.pop=F.pop==='fin'?null:'fin';renderSide();return;
    case 'finby':F.finBy=b.dataset.v;F.finMode='period';F.pop=null;renderSide();renderBody();return;
    case 'finmode':{if(b.dataset.v==='custom'){F.finMode='custom';renderSide();renderBody();return}F.finMode='period';renderSide();renderBody();return}
-   case 'tcus':{const k=b.dataset.k,r=rangeOf(k);return rangePicker(b,F[k+'P']==='custom'?F[k+'From']:r[0],F[k+'P']==='custom'?F[k+'To']:r[1],(a,c)=>{if(k==='rp')F.finMode='custom';F[k+'P']='custom';F[k+'From']=a;F[k+'To']=c;F.pg=0;renderSide();renderBody()})}
+   case 'tcus':{const k=b.dataset.k,r=rangeOf(k);return rangePicker(b,F[k+'P']==='custom'?F[k+'From']:r[0],F[k+'P']==='custom'?F[k+'To']:r[1],(a,c)=>{if(k==='rp')F.finMode='custom';F[k+'P']='custom';F[k+'From']=a;F[k+'To']=c;F.pg=0;renderSide();renderBody()},{okLabel:k==='rp'?'Tạo báo cáo':'Áp dụng',side:!!b.closest('#vs,.lp,aside')})}
    case 'pill':F[b.dataset.k]=b.dataset.v;F.pg=0;renderSide();renderBody();return;
    case 'pg':F.pg+=+b.dataset.v;F.exp=null;renderBody();return;
    case 'xt':F.xt=b.dataset.v;renderBody();return;
