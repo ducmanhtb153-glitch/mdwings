@@ -472,6 +472,7 @@ function cashForm(pre={}){
    <label>Đối tượng<select id="c-pt"><option value="">Khác</option><option value="customer"${pt==='customer'?' selected':''}>Khách hàng</option><option value="supplier"${pt==='supplier'?' selected':''}>Nhà cung cấp</option></select></label>
    <label>Tên người ${type==='thu'?'nộp':'nhận'}<input id="c-pn" value="${h(partnerVal)}"></label>
    <label>Ghi chú<input id="c-note" value="${h(pre.note||'')}"></label>
+   <label class="chk" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:8px"><input id="c-kq" type="checkbox"${pre.partnerType||pre.kqkd===false?'':' checked'} style="width:auto"> Hạch toán vào kết quả hoạt động kinh doanh</label>
   </div></div>
   <div class="mf"><button class="btn" data-close>Bỏ qua</button><button class="btn pri" id="c-save">Lưu</button></div>`,root=>{
     moneyFmt(root);
@@ -483,7 +484,7 @@ function cashForm(pre={}){
         if(pre.partnerId!==undefined&&txt===partnerVal){pid=pre.partnerId||'';pname=pre.partnerName||''}
         else{const p=txt?await ensurePartner(col,txt):null;pid=p?p.id:'';pname=p?p.name:(ptv==='customer'?'Khách lẻ':'')}}
       const t=$('#c-type').value,acc=$('#c-acc').value;
-      const doc={type:t,account:acc,amount:amt,category:$('#c-cat').value.trim()||(t==='thu'?'Thu khác':'Chi khác'),partnerType:ptv,partnerId:pid,partnerName:pname,date:$('#c-date').value||today(),note:$('#c-note').value.trim(),refCode:pre.refCode||cashCode(t,acc),...stamp()};
+      const doc={type:t,account:acc,amount:amt,category:$('#c-cat').value.trim()||(t==='thu'?'Thu khác':'Chi khác'),partnerType:ptv,partnerId:pid,partnerName:pname,date:$('#c-date').value||today(),note:$('#c-note').value.trim(),kqkd:!!$('#c-kq').checked,refCode:pre.refCode||cashCode(t,acc),...stamp()};
       ['orderId','purchaseId','returnId'].forEach(k=>{if(pre[k])doc[k]=pre[k]});
       await db.collection('cash').doc().set(doc);closeModal();toast('Đã lưu phiếu '+doc.refCode)})});
 }
@@ -968,8 +969,8 @@ function dashboard(){
 
 /* ============ BÁO CÁO ============ */
 function liveIn(r){return{os:vals('orders').filter(o=>o.status!=='Đã hủy'&&inR(o.date,r)),rs:vals('returns').filter(x=>!x.canceled&&inR(x.date,r))}}
-const expCash=r=>vals('cash').filter(c=>!c.canceled&&c.type==='chi'&&!c.partnerType&&inR(c.date,r));
-const otherIn=r=>vals('cash').filter(c=>!c.canceled&&c.type==='thu'&&!c.partnerType&&inR(c.date,r));
+const expCash=r=>vals('cash').filter(c=>!c.canceled&&c.type==='chi'&&!c.partnerType&&c.kqkd!==false&&inR(c.date,r));
+const otherIn=r=>vals('cash').filter(c=>!c.canceled&&c.type==='thu'&&!c.partnerType&&c.kqkd!==false&&inR(c.date,r));
 function byDay(os,rs){const m={};const g=k=>m[k]||(m[k]={n:0,goods:0,disc:0,rev:0,ret:0,cost:0,rcost:0});os.forEach(o=>{const d=g(o.date);d.n++;d.goods+=+o.goods||0;d.disc+=+o.discount||0;d.rev+=rev(o);d.cost+=cogs(o)});rs.forEach(r=>{const d=g(r.date);d.ret+=+r.total||0;d.rcost+=rcogs(r)});return m}
 const chartDays=(m,f)=>{const k=Object.keys(m).sort();return{labels:k.map(x=>x.slice(8)+'/'+x.slice(5,7)),values:k.map(x=>f(m[x])),tips:k.map(fd)}};
 function prodAgg(os,rs){const m={},g=(pid,i)=>m[pid]||(m[pid]={sku:i.sku,name:i.name,qty:0,rev:0,rq:0,rv:0,cost:0,rcost:0});
