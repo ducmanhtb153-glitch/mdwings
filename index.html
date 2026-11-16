@@ -68,7 +68,13 @@ a.lk{color:var(--blue);cursor:pointer;text-decoration:none}a.lk:hover{text-decor
 .lp-top .search:before{content:"";position:absolute;left:11px;top:9px;width:10px;height:10px;border:1.6px solid #6b7178;border-radius:50%}
 .lp-top .search:after{content:"";position:absolute;left:21px;top:20px;width:5px;height:1.6px;background:#6b7178;transform:rotate(45deg)}
 .lp-top .sp{flex:1}
-.filters{background:#fff;border-radius:8px;padding:14px 12px 6px;margin-top:12px}
+.filters{background:#fff;border-radius:8px;padding:12px 12px 2px;margin-top:12px;box-shadow:-8px 8px 24px rgba(0,0,0,.04)}
+.filters .fs{margin-bottom:22px}.filters .fs .ft{font-size:14px;font-weight:600;color:#15171a;margin-bottom:10px}
+.filters select{width:100%;height:32px;padding:0 10px;border:1px solid #d1d5da;border-radius:8px;font-size:14px;color:#15171a;background:#fff}
+.filters .ftxt{height:32px;border-color:#d1d5da;font-size:14px;padding:0 12px}.filters .msel{border-color:#d1d5da;min-height:32px;padding:2px 8px}.filters .msel input{font-size:14px}
+.filters .tbox{border-color:#d1d5da}.filters .opt{color:#15171a}
+.frow2{display:flex;gap:8px;margin-top:8px}.frow2 select{width:72px;flex:none}.frow2 .ftxt{margin-top:0;flex:1}
+.pills span{border-color:#d1d5da!important;color:#3e464f;padding:5px 12px!important;font-size:14px!important}.pills span.on{color:#fff;font-weight:500}.pills{gap:8px!important}
 .fs{margin-bottom:16px}
 .fs .ft{font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between}
 .fs .ft a{font-weight:400}
@@ -466,8 +472,8 @@ function dpOpen(anchor,html,onClick,side){dpClose();const el=document.createElem
   setTimeout(()=>document.addEventListener('mousedown',dpOut,true),0)}
 function dpOut(e){const el=$('#dpk');if(el&&!el.contains(e.target))dpClose()}
 function dpClose(){const el=$('#dpk');if(el)el.remove();document.removeEventListener('mousedown',dpOut,true)}
-function rangePicker(anchor,from,to,onApply,o={}){const T=today();let a=from&&from>'0000-00-00'?from:T,b=to&&to<'9999-12-31'?to:T;if(a>T)a=T;if(b>T)b=T;if(b<a)b=a;let lm=a.slice(0,7),rm=b.slice(0,7);
-  dpOpen(anchor,()=>`<div class="dh">Từ ngày: <b>${fd(a)}</b> - Đến ngày: <b>${fd(b)}</b></div><div class="cals">${calGrid(lm,{sel:[a],a,b,side:'L',max:T})}${calGrid(rm,{sel:[b],a,b,side:'R',min:a,max:T})}</div><div class="df"><a data-dpa="today">Hôm nay</a><span class="sp"></span><button class="btn" data-dpa="cancel">Bỏ qua</button><button class="btn pri" data-dpa="ok">${o.okLabel||'Áp dụng'}</button></div>`,e=>{
+function rangePicker(anchor,from,to,onApply,o={}){const T=today(),MX=o.future?'9999-12-31':T;let a=from&&from>'0000-00-00'?from:T,b=to&&to<'9999-12-31'?to:T;if(a>MX)a=MX;if(b>MX)b=MX;if(b<a)b=a;let lm=a.slice(0,7),rm=b.slice(0,7);
+  dpOpen(anchor,()=>`<div class="dh">Từ ngày: <b>${fd(a)}</b> - Đến ngày: <b>${fd(b)}</b></div><div class="cals">${calGrid(lm,{sel:[a],a,b,side:'L',max:MX})}${calGrid(rm,{sel:[b],a,b,side:'R',min:a,max:MX})}</div><div class="df"><a data-dpa="today">Hôm nay</a><span class="sp"></span><button class="btn" data-dpa="cancel">Bỏ qua</button><button class="btn pri" data-dpa="ok">${o.okLabel||'Áp dụng'}</button></div>`,e=>{
     const t=e.target,n=t.closest('[data-dpn]'),d=t.closest('[data-dpd]'),ac=t.closest('[data-dpa]');
     if(n){if(n.dataset.side==='L')lm=addMon(lm,+n.dataset.dpn);else rm=addMon(rm,+n.dataset.dpn);return}
     if(d){const v=d.dataset.dpd;if(d.dataset.side==='L'){a=v;if(a>b)b=a;lm=v.slice(0,7);if(rm<lm)rm=lm}else{b=v;if(b<a)a=b;rm=v.slice(0,7)}return}
@@ -880,13 +886,13 @@ function edSave(btn){run(btn,async()=>{
 
 /* ============ THÀNH PHẦN TRANG DANH SÁCH ============ */
 const F={pg:0,pp:15,exp:null,xt:'info',sel:new Set(),pop:null,
-  prQ:'',prGroup:'',prStock:'all',prAct:'on',prTP:'all',prTFrom:'',prTTo:'',
+  prQ:'',prGroup:'',prGroups:[],prStock:'all',prOp:'>',prVal:'',prAct:'on',prTP:'all',prTFrom:'',prTTo:'',prEP:'all',prEFrom:'',prETo:'',prSups:[],prBrands:[],prLocs:[],prKinds:[],prDirect:'all',prLinked:'all',
   tgQ:'',tgGroup:'',
   kkP:'month',kkFrom:'',kkTo:'',kkSt:['Đã cân bằng kho'],kkQ:'',
   sQ:'',sDebt:'all',
   pP:'month',pFrom:'',pTo:'',pSt:['Đã nhập hàng'],pQ:'',pSup:'',
   oP:'month',oFrom:'',oTo:'',oSt:['Mới','Đang giao','Hoàn thành'],oRet:['Không trả hàng','Có trả hàng'],oPay:'',oCh:'',oQ:'',
-  rP:'month',rFrom:'',rTo:'',rSt:['Đã trả'],rQ:'',
+  rP:'month',rFrom:'',rTo:'',rSt:['Đang xử lý','Đã trả'],rKind:['Theo hóa đơn','Trả nhanh','Chuyển hoàn','Hoàn tiền'],rShip:[],rCarrier:[],rBy:'',rRecv:'',rCh:[],rOther:[],rQ:'',
   cQ:'',cDebt:'all',cTP:'all',cTFrom:'',cTTo:'',
   qAcc:'Tiền mặt',qP:'month',qFrom:'',qTo:'',qType:[],qCats:[],qSt:['Đã thanh toán'],qQ:'',qKq:'all',qBy:'',qStaff:'',qPT:'',qPN:'',qPP:'',qDebt:['Tính vào công nợ','Không tính vào công nợ','Không có công nợ'],
   rpP:'month',rpFrom:'',rpTo:'',finMode:'custom',finBy:'month',finYear:new Date().getFullYear(),rpView:'report',rpMq:{},rpDay:'',
@@ -923,12 +929,25 @@ const selOnly=l=>F.sel.size?l.filter(x=>F.sel.has(x.id)):l;
 /* ============ LỌC DỮ LIỆU ============ */
 function groups(){return[...new Set(vals('products').map(p=>p.group).filter(Boolean))].sort()}
 function soldPerDay(){const m={},from=ymd(new Date(Date.now()-29*864e5));for(const o of S.orders.values()){if(o.status==='Đã hủy'||o.date<from)continue;for(const i of o.items||[])m[i.pid]=(m[i.pid]||0)+(+i.qty||0)}for(const k in m)m[k]/=30;return m}
-function productsList(){const q=F.prQ.trim().toLowerCase(),tr=rangeOf('prT');return vals('products').filter(p=>{const s=D.st[p.id]||0;const cd=p.createdAt?ymd(new Date(p.createdAt)):'';
-  return(F.prAct==='any'||(F.prAct==='on'?!p.hidden:p.hidden))&&(!F.prGroup||p.group===F.prGroup)&&(F.prStock==='all'||(F.prStock==='low'?(+p.minStock>0&&s<=+p.minStock):F.prStock==='out'?s<=0:s>0))&&(F.prTP==='all'||inR(cd,tr))&&(!q||(p.sku+' '+p.name).toLowerCase().includes(q))}).sort(byTime)}
-function ordersList(){const r=rangeOf('o'),q=F.oQ.trim().toLowerCase();let payIds=null;if(F.oPay){payIds=new Set();for(const c of S.cash.values())if(c.orderId&&!c.canceled&&c.account===F.oPay)payIds.add(c.orderId)}
-  return vals('orders').filter(mine).filter(o=>{const hasR=!!(D.ordRet[o.id]||[]).length;return inR(o.date,r)&&F.oSt.includes(o.status)&&F.oRet.includes(hasR?'Có trả hàng':'Không trả hàng')&&(!F.oCh||o.channel===F.oCh)&&(!payIds||payIds.has(o.id))&&(!q||(o.code+' '+(o.cname||'')+' '+(o.ccode||'')+' '+(o.tracking||'')+' '+(o.items||[]).map(i=>i.name+' '+i.sku).join(' ')).toLowerCase().includes(q))}).sort(byTime)}
-function purchasesList(){const r=rangeOf('p'),q=F.pQ.trim().toLowerCase();return vals('purchases').filter(mine).filter(p=>inR(p.date,r)&&F.pSt.includes(p.canceled?'Đã hủy':'Đã nhập hàng')&&(!F.pSup||p.sname===F.pSup)&&(!q||(p.code+' '+p.sname+' '+(p.items||[]).map(i=>i.name+' '+i.sku).join(' ')).toLowerCase().includes(q))).sort(byTime)}
-function returnsList(){const r=rangeOf('r'),q=F.rQ.trim().toLowerCase();return vals('returns').filter(mine).filter(x=>inR(x.date,r)&&F.rSt.includes(x.canceled?'Đã hủy':'Đã trả')&&(!q||(x.code+' '+x.orderCode+' '+x.cname).toLowerCase().includes(q))).sort(byTime)}
+const prodSups=()=>{const m={};for(const p of vals('purchases'))if(!p.canceled)for(const i of p.items||[])(m[i.pid]=m[i.pid]||new Set()).add(p.sname||'');return m};
+const prKind=p=>p.kind||'Hàng hóa';
+function productsList(){const q=F.prQ.trim().toLowerCase(),tr=rangeOf('prT'),er=rangeOf('prE'),spd=F.prEP==='all'?null:soldPerDay(),sm=F.prSups.length?prodSups():null,v=+F.prVal;
+ return vals('products').filter(p=>{const s=D.st[p.id]||0;const cd=p.createdAt?ymd(new Date(p.createdAt)):'';
+  const stk=F.prStock==='all'||(F.prStock==='low'?(+p.minStock>0&&s<=+p.minStock):F.prStock==='over'?(+p.maxStock>0&&s>+p.maxStock):F.prStock==='out'?s<=0:F.prStock==='in'?s>0:
+   F.prStock==='custom'?(F.prVal===''||({'<':s<v,'<=':s<=v,'=':s===v,'>':s>v,'>=':s>=v}[F.prOp])):true);
+  let exp=true;if(spd){const r=spd[p.id]||0;if(s<=0)exp=inR(today(),er);else if(!r)exp=false;else{const dd=new Date();dd.setDate(dd.getDate()+Math.floor(s/r));exp=inR(ymd(dd),er)}}
+  return(F.prAct==='any'||(F.prAct==='on'?!p.hidden:p.hidden))&&(!F.prGroups.length||F.prGroups.includes(p.group))&&stk&&(F.prTP==='all'||inR(cd,tr))&&exp
+   &&(!sm||[...(sm[p.id]||[])].some(n=>F.prSups.includes(n)))&&(!F.prBrands.length||F.prBrands.includes(p.brand))&&(!F.prLocs.length||F.prLocs.includes(p.location||'Không có vị trí'))
+   &&(!F.prKinds.length||F.prKinds.includes(prKind(p)))&&(F.prDirect==='all'||(F.prDirect==='yes')===(p.directSale!==false))&&(F.prLinked==='all'||(F.prLinked==='yes')===!!p.linked)
+   &&(!q||(p.sku+' '+p.name).toLowerCase().includes(q))}).sort(byTime)}
+const retKind=x=>x.kind||(x.orderId||x.orderCode?'Theo hóa đơn':'Trả nhanh');
+const retBy=x=>{const u=x.createdBy&&S.appusers.get(x.createdBy);return x.createdByName||(u?u.name:'')};
+const retRecv=x=>x.receiverName||retBy(x);
+const retCh=x=>{const o=x.orderId&&S.orders.get(x.orderId);return x.channel||(o&&o.channel)||'Bán trực tiếp'};
+const retSt=x=>x.canceled?'Đã hủy':x.processing?'Đang xử lý':'Đã trả';
+function returnsList(){const r=rangeOf('r'),q=F.rQ.trim().toLowerCase();return vals('returns').filter(mine).filter(x=>inR(x.date,r)&&F.rSt.includes(retSt(x))&&F.rKind.includes(retKind(x))
+ &&(!F.rShip.length||F.rShip.includes(x.shipStatus))&&(!F.rCarrier.length||F.rCarrier.includes(x.carrier))&&(!F.rBy||retBy(x)===F.rBy)&&(!F.rRecv||retRecv(x)===F.rRecv)
+ &&(!F.rCh.length||F.rCh.includes(retCh(x)))&&(!F.rOther.length||(x.otherFees||[]).some(f=>F.rOther.includes(f.name)))&&(!q||(x.code+' '+x.orderCode+' '+x.cname).toLowerCase().includes(q))).sort(byTime)}
 function stocktakesList(){const r=rangeOf('kk'),q=F.kkQ.trim().toLowerCase();return vals('stocktakes').filter(mine).filter(x=>inR(x.date,r)&&F.kkSt.includes(x.canceled?'Đã hủy':'Đã cân bằng kho')&&(!q||(x.code+' '+(x.note||'')).toLowerCase().includes(q))).sort(byTime)}
 function partnersList(col){const isC=col==='customers',q=(isC?F.cQ:F.sQ).trim().toLowerCase(),mode=isC?F.cDebt:F.sDebt,debt=isC?D.cd:D.sd,tr=isC?rangeOf('cT'):null;
   return vals(col).filter(c=>(!q||(c.name+' '+(c.phone||'')+' '+(c.code||'')).toLowerCase().includes(q))&&(mode==='all'||(mode==='debt'?(debt[c.id]||0)>0:(debt[c.id]||0)<=0))&&(!isC||F.cTP==='all'||inR(c.createdAt?ymd(new Date(c.createdAt)):'',tr))).sort(byTime)}
@@ -943,7 +962,10 @@ function cashExtra(c){if(F.qKq!=='all'&&(F.qKq==='yes')!==cashKq(c))return false
  const pp=F.qPP.replace(/\D/g,'');if(pp&&!cashPhone(c).replace(/\D/g,'').includes(pp))return false;return F.qDebt.includes(cashDebt(c))}
 const textF=(k,ph)=>`<input class="ftxt" type="text" data-fq="${k}" placeholder="${h(ph)}" value="${h(F[k])}">`;
 const mselF=(k,title,ph)=>`<div class="fs"><div class="ft">${title}</div><div class="msel">${F[k].map(v=>`<span class="mtag">${h(v)}<b data-act="mseldel" data-k="${k}" data-v="${h(v)}">×</b></span>`).join('')}<input data-msel="${k}" placeholder="${F[k].length?'':h(ph)}" autocomplete="off"><div class="mdrop"></div></div></div>`;
-const MSEL={qCats:()=>[...new Set(vals('cash').map(c=>c.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'))};
+const uniq=a=>[...new Set(a.filter(Boolean))].sort((x,y)=>String(x).localeCompare(String(y),'vi'));
+const MSEL={prGroups:()=>uniq(groups()),prSups:()=>uniq(vals('suppliers').map(s=>s.name)),prBrands:()=>uniq(vals('products').map(p=>p.brand)),prLocs:()=>['Không có vị trí',...uniq(vals('products').map(p=>p.location))],
+ prKinds:()=>['Hàng hóa','Dịch vụ','Combo - đóng gói'],rShip:()=>uniq(vals('returns').map(x=>x.shipStatus)),rCarrier:()=>uniq(vals('returns').map(x=>x.carrier)),
+ rCh:()=>uniq(['Bán trực tiếp',...vals('orders').map(o=>o.channel)]),rOther:()=>uniq(vals('returns').flatMap(x=>(x.otherFees||[]).map(f=>f.name))),qCats:()=>[...new Set(vals('cash').map(c=>c.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'))};
 function mselDrop(inp){const k=inp.dataset.msel,q=inp.value.trim().toLowerCase(),dd=inp.parentElement.querySelector('.mdrop');const nv=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
  const l=MSEL[k]().filter(v=>!F[k].includes(v)&&(!q||nv(v).includes(nv(q))));dd.innerHTML=l.length?l.map(v=>`<div data-mpick="${h(v)}">${h(v)}</div>`).join(''):'<div class="none">Không có kết quả phù hợp</div>';dd.style.display='block'}
 function cashList(){const r=rangeOf('q'),q=F.qQ.trim().toLowerCase();return vals('cash').filter(mine).filter(c=>inR(c.date,r)&&(F.qAcc==='all'||c.account===F.qAcc)&&(!F.qType.length||F.qType.includes(c.type==='thu'?'Phiếu thu':'Phiếu chi'))&&(!F.qCats.length||F.qCats.includes(c.category))&&F.qSt.includes(c.canceled?'Đã hủy':'Đã thanh toán')&&cashExtra(c)&&(!q||((c.refCode||'')+' '+(c.partnerName||'')+' '+(c.note||'')).toLowerCase().includes(q))).sort(byTime)}
@@ -1024,7 +1046,11 @@ const R={
 'tong-quan':{full:true,body:()=>dashboard()},
 'nguoi-dung':{full:true,body:()=>usersPage()},
 'hang-hoa':{title:'Hàng hóa',
-  filters:()=>selectF('prGroup','Nhóm hàng',groups(),'Chọn nhóm hàng')+`<div class="fs"><div class="ft">Tồn kho</div><div class="sub">Tiêu chí tồn</div><select data-f="prStock">${[['all','Tất cả'],['low','Dưới định mức tồn'],['in','Còn hàng trong kho'],['out','Hết hàng trong kho']].map(([v,l])=>`<option value="${v}"${F.prStock===v?' selected':''}>${l}</option>`).join('')}</select></div>`+timeF('prT','Thời gian tạo')+radiosF('prAct','Lựa chọn hiển thị',[['on','Hàng đang kinh doanh'],['off','Hàng ngừng kinh doanh'],['any','Tất cả']]),
+  filters:()=>mselF('prGroups','Nhóm hàng','Chọn nhóm hàng')
+   +`<div class="fs"><div class="ft">Tồn kho</div><select data-f="prStock">${[['all','Tất cả'],['low','Dưới định mức tồn'],['over','Vượt định mức tồn'],['in','Còn hàng trong kho'],['out','Hết hàng trong kho'],['custom','Tùy chỉnh giá trị tồn']].map(([v,l])=>`<option value="${v}"${F.prStock===v?' selected':''}>${l}</option>`).join('')}</select>${F.prStock==='custom'?`<div class="frow2"><select data-f="prOp">${['<','<=','=','>','>='].map(o=>`<option${F.prOp===o?' selected':''}>${h(o)}</option>`).join('')}</select>${textF('prVal','Giá trị')}</div>`:''}</div>`
+   +timeF('prE','Dự kiến hết hàng')+timeF('prT','Thời gian tạo')+mselF('prSups','Nhà cung cấp','Chọn nhà cung cấp')+mselF('prBrands','Thương hiệu','Chọn thương hiệu')+mselF('prLocs','Vị trí','Chọn vị trí')+mselF('prKinds','Loại hàng','Chọn loại hàng')
+   +pillsF('prDirect','Bán trực tiếp',[['all','Tất cả'],['yes','Có'],['no','Không']])+pillsF('prLinked','Liên kết kênh bán',[['all','Tất cả'],['yes','Có'],['no','Không']])
+   +`<div class="fs"><div class="ft">Trạng thái hàng hóa</div><select data-f="prAct">${[['any','Tất cả'],['on','Hàng đang kinh doanh'],['off','Hàng ngừng kinh doanh']].map(([v,l])=>`<option value="${v}"${F.prAct===v?' selected':''}>${l}</option>`).join('')}</select></div>`,
   top:()=>searchBox('prQ','Theo mã, tên hàng')+'<span class="sp"></span>'+wbtn('new-product','+ Tạo mới')+wbtn('import','⇩ Import file','')+xbtn('csv-stock'),
   body:()=>{const l=productsList(),spd=soldPerDay();return listTable({col:'products',thumb:1,list:l,cols:[['Mã hàng'],['Tên hàng'],['Giá bán','r'],...(isOwner?[['Giá vốn','r']]:[]),['Tồn kho','r'],['Thời gian tạo'],['Dự kiến hết hàng']],
     sum:['','','',...(isOwner?['']:[]),`<b>${fm(sum(l,p=>D.st[p.id]))}</b>`,'---','---'],rowCls:p=>p.hidden?'dim':'',
@@ -1061,7 +1087,10 @@ const R={
     sum:['','','','','',`<b>${fm(sum(live,o=>o.goods))}</b>`,`<b>${fm(sum(live,o=>o.discount))}</b>`,`<b>${fm(sum(live,o=>D.orderPaid[o.id]))}</b>`,''],rowCls:o=>o.status==='Đã hủy'?'dim':'',
     cells:o=>{const p=D.orderPaid[o.id]||0;return[h(o.code),fdt(o.date,o.createdAt),(D.ordRet[o.id]||[]).map(r=>h(r.code)).join(', '),h(o.ccode||(S.customers.get(o.cid)||{}).code||''),h(o.cname||'Khách lẻ'),fm(o.goods),fm(o.discount),`<span class="${p?'':'red'}">${fm(p)}</span>`,stChip(o.status)]},detail:orderDetail})}},
 'tra-hang':{title:'Trả hàng',
-  filters:()=>checksF('rSt','Trạng thái',['Đã trả','Đã hủy'])+timeF('r'),
+  filters:()=>checksF('rKind','Loại trả hàng',['Theo hóa đơn','Trả nhanh','Chuyển hoàn','Hoàn tiền'])+checksF('rSt','Trạng thái',['Đang xử lý','Đã trả','Đã hủy'])
+   +mselF('rShip','Trạng thái giao hàng','Chọn trạng thái')+mselF('rCarrier','Đối tác giao hàng','Chọn đối tác giao hàng')+timeF('r')
+   +selectF('rBy','Người tạo',uniq(vals('returns').map(retBy)),'Chọn người tạo')+selectF('rRecv','Người nhận trả',uniq(vals('returns').map(retRecv)),'Chọn người nhận trả')
+   +mselF('rCh','Kênh bán','Chọn kênh bán')+mselF('rOther','Loại thu khác','Chọn loại thu khác'),
   top:()=>searchBox('rQ','Theo mã phiếu trả')+'<span class="sp"></span>'+wbtn('new-return','+ Trả hàng')+xbtn('csv-returns'),
   body:()=>{const l=returnsList(),live=l.filter(r=>!r.canceled);return listTable({col:'returns',list:l,cols:[['Mã trả hàng'],['Người bán'],['Thời gian'],['Mã KH'],['Khách hàng'],['Tổng tiền hàng','r'],['Cần trả khách','r'],['Đã trả khách','r'],['Trạng thái']],
     sum:['','','','','',`<b>${fm(sum(live,r=>r.total))}</b>`,`<b>${fm(sum(live,r=>r.total))}</b>`,`<b>${fm(sum(live,r=>D.retPaid[r.id]))}</b>`,''],rowCls:r=>r.canceled?'dim':'',
@@ -1096,7 +1125,7 @@ function barChart(labels,values,tips){
 function hChart(items,fmt){if(!items.length)return empty('Chưa có dữ liệu');
   const W=600,L=8,R=60,rowH=40,T=4,H=T+items.length*rowH+24,max=niceMax(Math.max(...items.map(x=>x.v),0)),iw=W-L-R;let g='';
   for(let i=0;i<=6;i++){const x=L+iw*i/6;g+=`<line x1="${x}" x2="${x}" y1="${T}" y2="${H-20}"/><text x="${x}" y="${H-6}" text-anchor="middle">${i?short(max*i/6):'0'}</text>`}
-  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}">${g}`+items.map((x,i)=>{const y=T+i*rowH,w=Math.max(1,iw*x.v/max);return `<text x="${L}" y="${y+13}" style="fill:#3b4046;font-size:11.5px">${h(x.name.length>70?x.name.slice(0,68)+'…':x.name)}</text><rect class="hb" x="${L}" y="${y+18}" width="${w}" height="14"><title>${h(x.name)}: ${fm(x.v)}</title></rect><text x="${L+w+6}" y="${y+29}">${fmt(x.v)}</text>`}).join('')+`</svg></div>`}
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}">${g}`+items.map((x,i)=>{const y=T+i*rowH,w=Math.max(1,iw*x.v/max);return `<text x="${L}" y="${y+13}" style="fill:#3b4046;font-size:11.5px">${h(String(x.name||'').length>70?String(x.name).slice(0,68)+'…':(x.name||''))}</text><rect class="hb" x="${L}" y="${y+18}" width="${w}" height="14"><title>${h(x.name)}: ${fm(x.v)}</title></rect><text x="${L+w+6}" y="${y+29}">${fmt(x.v)}</text>`}).join('')+`</svg></div>`}
 const perSel=k=>`<select data-f="${k}">${PERIODS.slice(0,6).map(([v,l])=>`<option value="${v}"${F[k]===v?' selected':''}>${l}</option>`).join('')}</select>`;
 const netOf=(os,rs)=>sum(os,rev)-sum(rs,r=>r.total);
 function dashboard(){
@@ -1450,7 +1479,7 @@ document.addEventListener('click',e=>{
    case 'finpop':F.pop=F.pop==='fin'?null:'fin';renderSide();return;
    case 'finby':F.finBy=b.dataset.v;F.finMode='period';F.pop=null;renderSide();renderBody();return;
    case 'finmode':{if(b.dataset.v==='custom'){F.finMode='custom';renderSide();renderBody();return}F.finMode='period';renderSide();renderBody();return}
-   case 'tcus':{const k=b.dataset.k,r=rangeOf(k);return rangePicker(b,F[k+'P']==='custom'?F[k+'From']:r[0],F[k+'P']==='custom'?F[k+'To']:r[1],(a,c)=>{if(k==='rp')F.finMode='custom';F[k+'P']='custom';F[k+'From']=a;F[k+'To']=c;F.pg=0;renderSide();renderBody()},{okLabel:k==='rp'?'Tạo báo cáo':'Áp dụng',side:!!b.closest('#vs,.lp,aside')})}
+   case 'tcus':{const k=b.dataset.k,r=rangeOf(k);return rangePicker(b,F[k+'P']==='custom'?F[k+'From']:r[0],F[k+'P']==='custom'?F[k+'To']:r[1],(a,c)=>{if(k==='rp')F.finMode='custom';F[k+'P']='custom';F[k+'From']=a;F[k+'To']=c;F.pg=0;renderSide();renderBody()},{future:k==='prE',okLabel:k==='rp'?'Tạo báo cáo':'Áp dụng',side:!!b.closest('#vs,.lp,aside')})}
    case 'pill':F[b.dataset.k]=b.dataset.v;F.pg=0;renderSide();renderBody();return;
    case 'pg':F.pg+=+b.dataset.v;F.exp=null;renderBody();return;
    case 'xt':F.xt=b.dataset.v;renderBody();return;
@@ -1488,9 +1517,9 @@ document.addEventListener('click',e=>{
    case 'r-cancel':if(!arm(b,'Bấm lần nữa để hủy phiếu'))return;return run(b,async()=>{await db.doc('returns/'+id).update({canceled:true,canceledBy:me||'',canceledAt:Date.now()});for(const c of S.cash.values())if(c.returnId===id&&!c.canceled)await db.doc('cash/'+c.id).update({canceled:true,canceledAt:Date.now()});toast('Đã hủy phiếu trả hàng')});
    case 'k-cancel':if(!arm(b,'Bấm lần nữa để hủy phiếu'))return;return run(b,async()=>{await db.doc('stocktakes/'+id).update({canceled:true,canceledBy:me||'',canceledAt:Date.now()});toast('Đã hủy phiếu kiểm kho')});
    case 'goto-doc':return gotoDoc(b.dataset.code);
-   case 'goto-product':{const p=S.products.get(id);if(!p)return;Object.assign(F,{prQ:p.sku,prGroup:'',prStock:'all',prAct:'any',prTP:'all'});location.hash='#hang-hoa';setTimeout(()=>{F.exp=id;renderBody()});return}
+   case 'goto-product':{const p=S.products.get(id);if(!p)return;Object.assign(F,{prQ:p.sku,prGroup:'',prGroups:[],prEP:'all',prSups:[],prBrands:[],prLocs:[],prKinds:[],prDirect:'all',prLinked:'all',prStock:'all',prAct:'any',prTP:'all'});location.hash='#hang-hoa';setTimeout(()=>{F.exp=id;renderBody()});return}
    case 'goto-supplier':{const s=S.suppliers.get(id);if(!s)return;Object.assign(F,{sQ:s.code||s.name,sDebt:'all'});location.hash='#nha-cung-cap';setTimeout(()=>{F.exp=id;renderBody()});return}
-   case 'goto-low':Object.assign(F,{prStock:'low',prQ:'',prGroup:'',prAct:'on',prTP:'all'});location.hash='#hang-hoa';return;
+   case 'goto-low':Object.assign(F,{prStock:'low',prQ:'',prGroup:'',prGroups:[],prEP:'all',prSups:[],prBrands:[],prLocs:[],prKinds:[],prDirect:'all',prLinked:'all',prAct:'on',prTP:'all'});location.hash='#hang-hoa';return;
    case 'csv-ledger':{const col=b.dataset.col,c=S[col].get(id);let run_=0;return exportCSV(`cong-no_${c.code||c.name}.csv`,[['Mã phiếu','Ngày','Loại','Giá trị','Dư nợ'],...ledger(col,id).map(e=>{run_+=e.v;return[e.code,fd(e.date),e.kind,e.v,run_]})])}
    case 'csv-orders':return exportCSV(`hoa-don_${today()}.csv`,[['Mã hóa đơn','Thời gian','Mã KH','Khách hàng','Kênh bán','Trạng thái','Hàng hóa','Tổng tiền hàng','Giảm giá','Phí ship','Khách cần trả','Khách đã trả','Mã vận đơn','Ghi chú'],...selOnly(ordersList()).map(o=>[o.code,fdt(o.date,o.createdAt),o.ccode||'',o.cname,o.channel,o.status,(o.items||[]).map(i=>`${i.name} x${i.qty}`).join('; '),o.goods,o.discount,o.ship,o.total,D.orderPaid[o.id]||0,o.tracking||'',o.note||''])]);
    case 'csv-purchases':return exportCSV(`nhap-hang_${today()}.csv`,[['Mã nhập hàng','Thời gian','Nhà cung cấp','Hàng hóa','Cần trả NCC','Đã trả','Trạng thái'],...selOnly(purchasesList()).map(p=>[p.code,fdt(p.date,p.createdAt),p.sname,(p.items||[]).map(i=>`${i.name} x${i.qty}`).join('; '),p.total,D.purPaid[p.id]||0,p.canceled?'Đã hủy':'Đã nhập hàng'])]);
