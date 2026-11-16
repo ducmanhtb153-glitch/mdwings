@@ -12,10 +12,10 @@
 html,body{margin:0}
 body{font:14px/1.45 Inter,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
 button,input,select,textarea{font:inherit;color:inherit}
-.wrap{max-width:1600px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1648px;margin:0 auto;padding:0 24px}
 /* ---- header + menu ---- */
 header{background:#fff}
-header .wrap{display:flex;align-items:center;height:40px}
+header .wrap{display:flex;align-items:center;height:48px}
 .brand{display:flex;align-items:center;gap:7px;font-weight:700;font-size:17px;color:#1a2b49}
 .logo{width:24px;height:24px;position:relative}
 .logo:before,.logo:after{content:"";position:absolute;top:2px;width:13px;height:20px;border-radius:10px 2px 10px 2px}
@@ -24,7 +24,7 @@ header .wrap{display:flex;align-items:center;height:40px}
 .hright .who{display:flex;align-items:center;gap:6px}
 .hright .av{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
 nav{background:var(--blue);position:sticky;top:0;z-index:20}
-nav .wrap{display:flex;align-items:center;height:40px;gap:2px}
+nav .wrap{display:flex;align-items:center;height:48px;gap:2px}
 .ni{position:relative;height:100%;display:flex;align-items:center}
 .ni>a{display:block;padding:6px 16px;border-radius:8px;color:#fff;text-decoration:none;font-weight:600;white-space:nowrap}
 .ni>a:hover{background:rgba(255,255,255,.12)}
@@ -46,7 +46,7 @@ main{padding:14px 0 50px}
 input,select,textarea{padding:7px 10px;border:1px solid #d9dce1;border-radius:6px;background:#fff;min-width:0;outline:none}
 input:focus,select:focus,textarea:focus{border-color:var(--blue)}
 input[type=checkbox],input[type=radio]{accent-color:var(--blue);width:16px;height:16px;margin:0}
-.btn{display:inline-flex;align-items:center;gap:6px;font-weight:500;padding:6px 12px;border-radius:6px;border:1px solid #d9dce1;background:#fff;cursor:pointer;white-space:nowrap;height:32px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid #d9dce1;background:#fff;cursor:pointer;white-space:nowrap;height:32px}
 .btn:hover{background:var(--gray)}
 .btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}.btn.pri:hover{background:var(--blued)}
 .btn.out{border-color:var(--blue);color:var(--blue)}.btn.out:hover{background:var(--bluebg)}
@@ -64,7 +64,7 @@ a.lk{color:var(--blue);cursor:pointer;text-decoration:none}a.lk:hover{text-decor
 .lp-title{font-size:20px;font-weight:700;height:32px;display:flex;align-items:center}
 .lp-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .lp-top .search{position:relative;width:min(408px,100%)}
-.lp-top .search input{width:100%;padding-left:32px;height:32px}
+.lp-top .search input{width:100%;padding-left:32px;height:30px;border-radius:8px}
 .lp-top .search:before{content:"";position:absolute;left:11px;top:9px;width:10px;height:10px;border:1.6px solid #6b7178;border-radius:50%}
 .lp-top .search:after{content:"";position:absolute;left:21px;top:20px;width:5px;height:1.6px;background:#6b7178;transform:rotate(45deg)}
 .lp-top .sp{flex:1}
@@ -76,7 +76,7 @@ a.lk{color:var(--blue);cursor:pointer;text-decoration:none}a.lk:hover{text-decor
 .fs select,.fs input[type=text],.fs input[type=date]{width:100%}
 .opt{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
 .trow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.tbox{flex:1;display:flex;align-items:center;justify-content:space-between;border:1px solid #d9dce1;border-radius:6px;padding:5px 9px;cursor:pointer;background:#fff;position:relative;min-height:32px}
+.tbox{flex:1;display:flex;align-items:center;justify-content:space-between;border:1px solid #d9dce1;border-radius:8px;padding:5px 9px;cursor:pointer;background:#fff;position:relative;min-height:32px}
 .tbox .pop{position:absolute;left:-1px;right:-1px;top:calc(100% + 4px);background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:15;padding:6px}
 .tbox .pop div{padding:7px 10px;border-radius:5px}.tbox .pop div:hover{background:var(--gray)}
 .tbox .pop div.cur{color:var(--blue);font-weight:600}
@@ -87,7 +87,7 @@ a.lk{color:var(--blue);cursor:pointer;text-decoration:none}a.lk:hover{text-decor
 .tw{background:#fff;border-radius:8px;margin-top:12px;overflow:hidden}
 .ts{overflow-x:auto}
 table{border-collapse:collapse;width:100%}
-.grid th{background:var(--bluebg);font-size:12px;font-weight:600;text-align:left;padding:12px 10px;white-space:nowrap}
+.grid th{background:var(--bluebg);font-size:12px;font-weight:600;text-align:left;padding:10px;line-height:20px;white-space:nowrap}
 .grid td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 .grid .r{text-align:right}
 .grid .cb{width:34px;padding-right:0}.grid .st{width:30px;padding-left:4px;padding-right:0}
@@ -267,7 +267,7 @@ textarea{width:100%}
 .cus .cdd{max-height:380px}.dd .it.addnew{justify-content:center;color:var(--blue);font-weight:600;border-top:1px solid #eef0f2}
 .cussel{display:flex;align-items:center;gap:10px;background:#e8f1ff;border-radius:6px;padding:6px 10px;min-height:32px;flex-wrap:wrap}.cussel .cn{font-weight:600;color:var(--blue)}.cussel .x{margin-left:auto;cursor:pointer;color:#6b7280;font-size:14px}
 .pz small.strike{display:block;text-align:right;font-size:11.5px;color:#8a9099;text-decoration:line-through}.pz input[readonly],#ps-disc[readonly]{cursor:pointer}
-.pop{position:fixed;z-index:58;background:#fff;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:12px 14px;width:300px}.pop.hidden{display:none}
+.ppop{position:fixed;z-index:58;background:#fff;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:12px 14px;width:300px}.ppop.hidden{display:none}
 .pp-row{display:flex;align-items:center;gap:10px;margin:6px 0}.pp-row>span:first-child{width:72px;color:#3b4046}.pp-row input{flex:1;min-width:0;text-align:right;border:0;border-bottom:1px solid #d9dce1;border-radius:0;padding:4px}.pp-row.b{font-weight:600}.pp-row.b #pp-final{flex:1;text-align:right;color:var(--blue)}
 .tg{display:inline-flex;border:1px solid #d9dce1;border-radius:6px;overflow:hidden;flex:none}.tg b{padding:3px 8px;font-weight:500;cursor:pointer;font-size:12.5px}.tg b.on{background:var(--blue);color:#fff}
 .prow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px}
@@ -329,6 +329,25 @@ body.auth main{padding:0}
 .pct{font-weight:600;font-size:13px;margin:6px 0 2px}
 .rnav{position:sticky;top:0;align-self:start;background:#fff;border-radius:8px;padding:8px}
 .rnav a{display:block;padding:6px 10px;border-radius:5px;color:#3b4046;cursor:pointer;font-size:13px}.rnav a:hover{background:var(--gray);color:var(--blue)}
+
+.tbox .pop.pgrid{display:flex;gap:22px;width:max-content;right:auto;padding:14px 16px;z-index:40}
+.pgrid .pg{display:flex;flex-direction:column;gap:8px;align-items:flex-start;padding:0!important;border:0!important;box-shadow:none!important;background:none!important;outline:0}.pgrid .pg:hover{background:none!important}
+.pgrid .pgt{font-size:12.5px;font-weight:600;color:#15171a;padding:0!important;margin-bottom:2px}
+.pgrid .pg span{border:1px solid #d9dce1;border-radius:16px;padding:4px 10px;font-size:12.5px;white-space:nowrap;cursor:pointer}.pgrid .pg span:hover{border-color:var(--blue);color:var(--blue)}.pgrid .pg span.cur{background:var(--blue);border-color:var(--blue);color:#fff}
+.calic{width:16px;height:16px;flex:none;background:no-repeat center/16px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b4046' stroke-width='1.8'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2'/%3E%3C/svg%3E")}
+.dpk{position:fixed;z-index:95;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.2);padding:14px 16px 12px;font-size:14px;user-select:none}
+.dpk .dh{color:#3b4046;margin-bottom:12px}.dpk .dh b{color:#15171a}
+.dpk .cals{display:flex;gap:28px}.dpk .cal{width:224px}
+.dpk .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.dpk .ch span{font-size:13.5px;color:#3b4046}
+.dpk .ch b{width:22px;height:22px;border:1px solid #d9dce1;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:400;color:#3b4046}.dpk .ch b:hover{border-color:var(--blue);color:var(--blue)}
+.dpk .cg{display:grid;grid-template-columns:repeat(7,32px);row-gap:6px;column-gap:0}
+.dpk .cg i{font-style:normal;font-size:12.5px;color:#8a9099;text-align:center;height:24px;line-height:24px}
+.dpk .cg span{width:30px;height:30px;line-height:30px;text-align:center;border-radius:50%;cursor:pointer;color:#15171a;margin:0 1px}
+.dpk .cg span:hover{background:#e6f1fe}.dpk .cg span.out{color:#a8adb4}.dpk .cg span.td{color:var(--blue);font-weight:600}
+.dpk .cg span.rng{background:#eef5ff;border-radius:6px}.dpk .cg span.sel{background:var(--blue);color:#fff;font-weight:600}
+.dpk .df{display:flex;align-items:center;gap:8px;border-top:1px solid #eef0f2;margin-top:12px;padding-top:12px}.dpk .df a{color:var(--blue);cursor:pointer;font-weight:500}.dpk .df .sp{flex:1}
+input.dpin{cursor:pointer;background-repeat:no-repeat;background-position:right 8px center;background-size:15px;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='1.8'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/svg%3E")}
+@media(max-width:600px){.dpk .cals{flex-direction:column;gap:12px}.tbox .pop.pgrid{flex-wrap:wrap;width:calc(100vw - 40px)}}
 </style>
 </head>
 <body>
@@ -338,7 +357,7 @@ body.auth main{padding:0}
 <main><div class="wrap" id="view"></div></main>
 <div id="pos" class="posx hidden">
   <div class="ptop">
-    <div class="srch"><input id="ps-q" placeholder="Tìm hàng hóa (F3)" autocomplete="off"><div id="ps-dd" class="dd hidden"></div></div><div id="ps-pop" class="pop hidden"></div>
+    <div class="srch"><input id="ps-q" placeholder="Tìm hàng hóa (F3)" autocomplete="off"><div id="ps-dd" class="dd hidden"></div></div><div id="ps-pop" class="ppop hidden"></div>
     <div class="ptabs" id="ps-tabs"></div>
     <span class="sp"></span><div class="rt"><span id="ps-who"></span><button data-pos="close" title="Về trang quản lý">☰ Quản lý</button></div>
   </div>
@@ -368,7 +387,8 @@ const ACC_LABEL={'Tiền mặt':'Tiền mặt','Ngân hàng':'Chuyển khoản',
 const ACC_PRE={'Tiền mặt':'M','Ngân hàng':'NH','COD GHTK':'COD'};
 const THU_CATS=['Thu Tiền khách trả','Thu khác'];
 const CHI_CATS=['Chi QC FB','Chi QC TikTok','Chi Shopee','Chi lương','Chi mặt bằng','Chi vận chuyển','Chi nước uống','Chi khác'];
-const PERIODS=[['today','Hôm nay'],['yesterday','Hôm qua'],['7d','7 ngày qua'],['month','Tháng này'],['lastmonth','Tháng trước'],['year','Năm nay'],['all','Toàn thời gian']];
+const PERIODS=[['today','Hôm nay'],['yesterday','Hôm qua'],['7d','7 ngày qua'],['month','Tháng này'],['lastmonth','Tháng trước'],['year','Năm nay'],['all','Toàn thời gian'],['week','Tuần này'],['lastweek','Tuần trước'],['30d','30 ngày qua'],['quarter','Quý này'],['lastquarter','Quý trước'],['lastyear','Năm trước']];
+const PGROUPS=[['Theo ngày',['today','yesterday']],['Theo tuần',['week','lastweek','7d']],['Theo tháng',['month','lastmonth','30d']],['Theo quý',['quarter','lastquarter']],['Theo năm',['year','lastyear','all']]];
 
 const $=(s,r=document)=>r.querySelector(s);
 const h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -401,11 +421,48 @@ function periodRange(p){const n=new Date(),t=today();
   if(p==='today')return[t,t];
   if(p==='yesterday'){const d=new Date(n);d.setDate(d.getDate()-1);return[ymd(d),ymd(d)]}
   if(p==='7d'){const d=new Date(n);d.setDate(d.getDate()-6);return[ymd(d),t]}
+  if(p==='week'||p==='lastweek'){const d=new Date(n);d.setDate(d.getDate()-((d.getDay()+6)%7)-(p==='lastweek'?7:0));const e=new Date(d);e.setDate(e.getDate()+6);return[ymd(d),ymd(e)]}
+  if(p==='30d'){const d=new Date(n);d.setDate(d.getDate()-29);return[ymd(d),t]}
+  if(p==='quarter'||p==='lastquarter'){let q=Math.floor(n.getMonth()/3)-(p==='lastquarter'?1:0),y=n.getFullYear();if(q<0){q=3;y--}return[ymd(new Date(y,q*3,1)),ymd(new Date(y,q*3+3,0))]}
+  if(p==='lastyear')return[(n.getFullYear()-1)+'-01-01',(n.getFullYear()-1)+'-12-31'];
   if(p==='lastmonth')return[ymd(new Date(n.getFullYear(),n.getMonth()-1,1)),ymd(new Date(n.getFullYear(),n.getMonth(),0))];
   if(p==='year')return[n.getFullYear()+'-01-01',n.getFullYear()+'-12-31'];
   if(p==='all')return['0000-00-00','9999-12-31'];
   return[monthStart(),ymd(new Date(n.getFullYear(),n.getMonth()+1,0))]}
 const inR=(d,r)=>d>=r[0]&&d<=r[1];
+
+/* ============ CHỌN NGÀY (giống KiotViet) ============ */
+const DOW=['T2','T3','T4','T5','T6','T7','CN'];
+function calGrid(ym,opt){const y=+ym.slice(0,4),m=+ym.slice(5,7)-1,first=new Date(y,m,1),off=(first.getDay()+6)%7,start=new Date(y,m,1-off),cells=[];
+  const last=new Date(y,m+1,0).getDate(),rows=Math.ceil((off+last)/7);
+  for(let i=0;i<rows*7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const s=ymd(d),inM=d.getMonth()===m;
+    const cls=[inM?'':'out',s===today()?'td':'',opt.sel.includes(s)?'sel':'',opt.a&&opt.b&&s>opt.a&&s<opt.b&&inM?'rng':'',(d.getDay()===0||d.getDay()===6)&&inM?'we':''].filter(Boolean).join(' ');
+    cells.push(`<span class="${cls}" data-dpd="${s}" data-side="${opt.side}">${d.getDate()}</span>`)}
+  return `<div class="cal"><div class="ch"><b data-dpn="-1" data-side="${opt.side}">‹</b><span>Tháng ${m+1} ${y}</span><b data-dpn="1" data-side="${opt.side}">›</b></div><div class="cg">${DOW.map(x=>`<i>${x}</i>`).join('')}${cells.join('')}</div></div>`}
+const addMon=(ym,k)=>{const d=new Date(+ym.slice(0,4),+ym.slice(5,7)-1+k,1);return ymd(d).slice(0,7)};
+function dpOpen(anchor,html,onClick){dpClose();const el=document.createElement('div');el.className='dpk';el.id='dpk';el.innerHTML=html();document.body.appendChild(el);
+  const place=()=>{const r=anchor.getBoundingClientRect(),w=el.offsetWidth,hh=el.offsetHeight;let top=r.bottom+6;if(top+hh>innerHeight-8)top=Math.max(8,r.top-hh-6);el.style.top=top+'px';el.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px'};place();
+  el.addEventListener('click',e=>{e.stopPropagation();const done=onClick(e);if(done===true)dpClose();else{el.innerHTML=html();place()}});
+  setTimeout(()=>document.addEventListener('mousedown',dpOut,true),0)}
+function dpOut(e){const el=$('#dpk');if(el&&!el.contains(e.target))dpClose()}
+function dpClose(){const el=$('#dpk');if(el)el.remove();document.removeEventListener('mousedown',dpOut,true)}
+function rangePicker(anchor,from,to,onApply){let a=from&&from>'0000-00-00'?from:today(),b=to&&to<'9999-12-31'?to:today(),lm=a.slice(0,7),rm=b.slice(0,7);if(rm===lm)rm=lm;
+  dpOpen(anchor,()=>`<div class="dh">Từ ngày: <b>${fd(a)}</b> - Đến ngày: <b>${fd(b)}</b></div><div class="cals">${calGrid(lm,{sel:[a],a,b,side:'L'})}${calGrid(rm,{sel:[b],a,b,side:'R'})}</div><div class="df"><a data-dpa="today">Hôm nay</a><span class="sp"></span><button class="btn" data-dpa="cancel">Bỏ qua</button><button class="btn pri" data-dpa="ok">Áp dụng</button></div>`,e=>{
+    const t=e.target,n=t.closest('[data-dpn]'),d=t.closest('[data-dpd]'),ac=t.closest('[data-dpa]');
+    if(n){if(n.dataset.side==='L')lm=addMon(lm,+n.dataset.dpn);else rm=addMon(rm,+n.dataset.dpn);return}
+    if(d){const v=d.dataset.dpd;if(d.dataset.side==='L'){a=v;if(a>b)b=a;lm=v.slice(0,7)}else{b=v;if(b<a)a=b;rm=v.slice(0,7)}return}
+    if(ac){if(ac.dataset.dpa==='today'){a=b=today();lm=rm=a.slice(0,7);return}if(ac.dataset.dpa==='cancel')return true;onApply(a,b);return true}})}
+function datePicker(anchor,val,onPick){let v=val||today(),m=v.slice(0,7);
+  dpOpen(anchor,()=>`<div class="cals one">${calGrid(m,{sel:[v],side:'S'})}</div><div class="df"><a data-dpa="today">Hôm nay</a><span class="sp"></span><button class="btn" data-dpa="cancel">Bỏ qua</button></div>`,e=>{
+    const t=e.target,n=t.closest('[data-dpn]'),d=t.closest('[data-dpd]'),ac=t.closest('[data-dpa]');
+    if(n){m=addMon(m,+n.dataset.dpn);return}if(d){onPick(d.dataset.dpd);return true}
+    if(ac){if(ac.dataset.dpa==='today'){onPick(today());return true}return true}})}
+/* mọi ô ngày: hiện dd/mm/yyyy, bấm mở lịch, .value vẫn là yyyy-mm-dd */
+const _ivs=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value');
+function enhanceDate(inp){if(inp.dataset.dpk)return;const v=_ivs.get.call(inp);inp.dataset.dpk='1';inp.type='text';inp.readOnly=true;inp.classList.add('dpin');
+  Object.defineProperty(inp,'value',{configurable:true,get(){return this.dataset.iso||''},set(x){this.dataset.iso=x||'';_ivs.set.call(this,x?fd(x):'')}});inp.value=v;
+  inp.addEventListener('click',()=>{if(inp.disabled)return;datePicker(inp,inp.value,iso=>{inp.value=iso;inp.dispatchEvent(new Event('input',{bubbles:true}));inp.dispatchEvent(new Event('change',{bubbles:true}))})})}
+new MutationObserver(()=>document.querySelectorAll('input[type=date]').forEach(enhanceDate)).observe(document.documentElement,{childList:true,subtree:true});
 
 function toast(msg,err){const t=$('#toast');t.textContent=msg;t.className='show'+(err?' err':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='',3200)}
 function banner(msg,kind){const b=$('#banner');b.textContent=msg||'';b.className=kind||''}
@@ -817,9 +874,8 @@ const rangeOf=k=>F[k+'P']==='custom'?[F[k+'From']||'0000-00-00',F[k+'To']||'9999
 const plabel=p=>(PERIODS.find(x=>x[0]===p)||[,''])[1];
 function timeF(k,title='Thời gian'){const p=F[k+'P'],cus=p==='custom';
   return `<div class="fs"><div class="ft">${title}</div>
-  <div class="trow"><input type="radio" name="t-${k}" data-tp="${k}" value="preset"${cus?'':' checked'}><div class="tbox" data-act="tpop" data-k="${k}"><span>${cus?'Tháng này':plabel(p)}</span><span>›</span>${F.pop===k?`<div class="pop">${PERIODS.map(([v,l])=>`<div data-act="tset" data-k="${k}" data-v="${v}" class="${p===v?'cur':''}">${l}</div>`).join('')}</div>`:''}</div></div>
-  <div class="trow"><input type="radio" name="t-${k}" data-tp="${k}" value="custom"${cus?' checked':''}><div class="tbox" data-act="tcus" data-k="${k}"><span>${cus?fd(F[k+'From'])+' - '+fd(F[k+'To']):'Tùy chỉnh'}</span><span>📅</span></div></div>
-  ${cus?`<div class="dates"><input type="date" data-f="${k}From" value="${F[k+'From']}"><input type="date" data-f="${k}To" value="${F[k+'To']}"></div>`:''}</div>`}
+  <div class="trow"><input type="radio" name="t-${k}" data-tp="${k}" value="preset"${cus?'':' checked'}><div class="tbox" data-act="tpop" data-k="${k}"><span>${cus?'Tháng này':plabel(p)}</span><span>›</span>${F.pop===k?`<div class="pop pgrid">${PGROUPS.map(([g,ks])=>`<div class="pg"><div class="pgt">${g}</div>${ks.map(v=>`<span data-act="tset" data-k="${k}" data-v="${v}" class="${p===v&&!cus?'cur':''}">${plabel(v)}</span>`).join('')}</div>`).join('')}</div>`:''}</div></div>
+  <div class="trow"><input type="radio" name="t-${k}" data-tp="${k}" value="custom"${cus?' checked':''}><div class="tbox" data-act="tcus" data-k="${k}"><span>${cus?fd(F[k+'From'])+' - '+fd(F[k+'To']):'Tùy chỉnh'}</span><span class="calic"></span></div></div></div>`}
 const checksF=(k,title,list)=>`<div class="fs"><div class="ft">${title}</div>${list.map(v=>`<label class="opt"><input type="checkbox" data-fc="${k}" value="${h(v)}"${F[k].includes(v)?' checked':''}> ${h(v)}</label>`).join('')}</div>`;
 const radiosF=(k,title,list)=>`<div class="fs"><div class="ft">${title}</div>${list.map(([v,l])=>`<label class="opt"><input type="radio" name="r-${k}" data-f="${k}" value="${h(v)}"${F[k]===v?' checked':''}> ${h(l)}</label>`).join('')}</div>`;
 const pillsF=(k,title,list)=>`<div class="fs"><div class="ft">${title}</div><div class="pills">${list.map(([v,l])=>`<span data-act="pill" data-k="${k}" data-v="${h(v)}" class="${F[k]===v?'on':''}">${h(l)}</span>`).join('')}</div></div>`;
@@ -1330,7 +1386,7 @@ document.addEventListener('click',e=>{
    case 'new-role':return roleForm();case 'edit-role':return roleForm(id);case 'copy-role':return roleForm(id,true);
    case 'tpop':F.pop=F.pop===b.dataset.k?null:b.dataset.k;renderSide();return;
    case 'tset':{const k=b.dataset.k;F[k+'P']=b.dataset.v;F.pop=null;F.pg=0;renderSide();renderBody();return}
-   case 'tcus':{const k=b.dataset.k;F[k+'P']='custom';const r=periodRange('month');if(!F[k+'From'])F[k+'From']=r[0];if(!F[k+'To'])F[k+'To']=today();renderSide();renderBody();return}
+   case 'tcus':{const k=b.dataset.k,r=rangeOf(k);return rangePicker(b,F[k+'P']==='custom'?F[k+'From']:r[0],F[k+'P']==='custom'?F[k+'To']:r[1],(a,c)=>{F[k+'P']='custom';F[k+'From']=a;F[k+'To']=c;F.pg=0;renderSide();renderBody()})}
    case 'pill':F[b.dataset.k]=b.dataset.v;F.pg=0;renderSide();renderBody();return;
    case 'pg':F.pg+=+b.dataset.v;F.exp=null;renderBody();return;
    case 'xt':F.xt=b.dataset.v;renderBody();return;
