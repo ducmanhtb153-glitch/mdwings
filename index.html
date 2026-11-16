@@ -74,6 +74,7 @@ a.lk{color:var(--blue);cursor:pointer;text-decoration:none}a.lk:hover{text-decor
 .fs .ft a{font-weight:400}
 .fs .sub{font-size:12px;color:var(--mut);margin:-4px 0 4px}
 .fs select,.fs input[type=text],.fs input[type=date]{width:100%}
+.ftxt{width:100%;margin-top:8px;padding:7px 10px;border:1px solid #d6dbe1;border-radius:8px;font:inherit;font-size:13px;box-sizing:border-box}
 .opt{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
 .trow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .tbox{flex:1;display:flex;align-items:center;justify-content:space-between;border:1px solid #d9dce1;border-radius:8px;padding:5px 9px;cursor:pointer;background:#fff;position:relative;min-height:32px}
@@ -881,7 +882,7 @@ const F={pg:0,pp:15,exp:null,xt:'info',sel:new Set(),pop:null,
   oP:'month',oFrom:'',oTo:'',oSt:['Mới','Đang giao','Hoàn thành'],oRet:['Không trả hàng','Có trả hàng'],oPay:'',oCh:'',oQ:'',
   rP:'month',rFrom:'',rTo:'',rSt:['Đã trả'],rQ:'',
   cQ:'',cDebt:'all',cTP:'all',cTFrom:'',cTTo:'',
-  qAcc:'Tiền mặt',qP:'month',qFrom:'',qTo:'',qType:[],qCat:'',qSt:['Đã thanh toán'],qQ:'',
+  qAcc:'Tiền mặt',qP:'month',qFrom:'',qTo:'',qType:[],qCat:'',qSt:['Đã thanh toán'],qQ:'',qKq:'all',qBy:'',qStaff:'',qPT:'',qPN:'',qPP:'',qDebt:['Tính vào công nợ','Không tính vào công nợ','Không có công nợ'],
   rpP:'month',rpFrom:'',rpTo:'',finMode:'custom',finBy:'month',finYear:new Date().getFullYear(),rpView:'report',rpMq:{},rpDay:'',
   dP:'month',dMode:'day',tP:'month',tBy:'rev',cuP:'month'};
 const rangeOf=k=>F[k+'P']==='custom'?[F[k+'From']||'0000-00-00',F[k+'To']||'9999-12-31']:periodRange(F[k+'P']);
@@ -925,7 +926,17 @@ function returnsList(){const r=rangeOf('r'),q=F.rQ.trim().toLowerCase();return v
 function stocktakesList(){const r=rangeOf('kk'),q=F.kkQ.trim().toLowerCase();return vals('stocktakes').filter(mine).filter(x=>inR(x.date,r)&&F.kkSt.includes(x.canceled?'Đã hủy':'Đã cân bằng kho')&&(!q||(x.code+' '+(x.note||'')).toLowerCase().includes(q))).sort(byTime)}
 function partnersList(col){const isC=col==='customers',q=(isC?F.cQ:F.sQ).trim().toLowerCase(),mode=isC?F.cDebt:F.sDebt,debt=isC?D.cd:D.sd,tr=isC?rangeOf('cT'):null;
   return vals(col).filter(c=>(!q||(c.name+' '+(c.phone||'')+' '+(c.code||'')).toLowerCase().includes(q))&&(mode==='all'||(mode==='debt'?(debt[c.id]||0)>0:(debt[c.id]||0)<=0))&&(!isC||F.cTP==='all'||inR(c.createdAt?ymd(new Date(c.createdAt)):'',tr))).sort(byTime)}
-function cashList(){const r=rangeOf('q'),q=F.qQ.trim().toLowerCase();return vals('cash').filter(mine).filter(c=>inR(c.date,r)&&(F.qAcc==='all'||c.account===F.qAcc)&&(!F.qType.length||F.qType.includes(c.type==='thu'?'Phiếu thu':'Phiếu chi'))&&(!F.qCat||c.category===F.qCat)&&F.qSt.includes(c.canceled?'Đã hủy':'Đã thanh toán')&&(!q||((c.refCode||'')+' '+(c.partnerName||'')+' '+(c.note||'')).toLowerCase().includes(q))).sort(byTime)}
+const cashBy=c=>{const u=c.createdBy&&S.appusers.get(c.createdBy);return c.createdByName||(u?u.name:'')||(c.createdBy&&c.createdBy===me?'Chủ shop':'')};
+const cashStaff=c=>c.staffName||cashBy(c);
+const cashPT=c=>({customer:'Khách hàng',supplier:'Nhà cung cấp',staff:'Nhân viên',carrier:'Đối tác giao hàng'}[c.partnerType]||'Khác');
+const cashKq=c=>!c.partnerType&&c.kqkd!==false;
+const cashDebt=c=>!c.partnerType?'Không có công nợ':c.noDebt?'Không tính vào công nợ':'Tính vào công nợ';
+const cashPhone=c=>{const p=c.partnerType==='customer'?S.customers.get(c.partnerId):c.partnerType==='supplier'?S.suppliers.get(c.partnerId):null;return (p&&p.phone)||c.partnerPhone||''};
+function cashExtra(c){if(F.qKq!=='all'&&(F.qKq==='yes')!==cashKq(c))return false;if(F.qBy&&cashBy(c)!==F.qBy)return false;if(F.qStaff&&cashStaff(c)!==F.qStaff)return false;
+ if(F.qPT&&cashPT(c)!==F.qPT)return false;const pn=F.qPN.trim().toLowerCase();if(pn){const p=c.partnerType==='customer'?S.customers.get(c.partnerId):c.partnerType==='supplier'?S.suppliers.get(c.partnerId):null;if(!((c.partnerName||'')+' '+((p&&p.code)||'')).toLowerCase().includes(pn))return false}
+ const pp=F.qPP.replace(/\D/g,'');if(pp&&!cashPhone(c).replace(/\D/g,'').includes(pp))return false;return F.qDebt.includes(cashDebt(c))}
+const textF=(k,ph)=>`<input class="ftxt" type="text" data-fq="${k}" placeholder="${h(ph)}" value="${h(F[k])}">`;
+function cashList(){const r=rangeOf('q'),q=F.qQ.trim().toLowerCase();return vals('cash').filter(mine).filter(c=>inR(c.date,r)&&(F.qAcc==='all'||c.account===F.qAcc)&&(!F.qType.length||F.qType.includes(c.type==='thu'?'Phiếu thu':'Phiếu chi'))&&(!F.qCat||c.category===F.qCat)&&F.qSt.includes(c.canceled?'Đã hủy':'Đã thanh toán')&&cashExtra(c)&&(!q||((c.refCode||'')+' '+(c.partnerName||'')+' '+(c.note||'')).toLowerCase().includes(q))).sort(byTime)}
 function boughtMap(col){const m={},r={};if(col==='customers'){for(const o of S.orders.values())if(o.status!=='Đã hủy')m[o.cid]=(m[o.cid]||0)+(+o.total||0);for(const x of S.returns.values())if(!x.canceled)r[x.cid]=(r[x.cid]||0)+(+x.total||0)}else for(const p of S.purchases.values())if(!p.canceled)m[p.sid]=(m[p.sid]||0)+(+p.total||0);return[m,r]}
 
 /* ============ CHI TIẾT DÒNG ============ */
@@ -1051,8 +1062,11 @@ const R={
   body:()=>{const l=partnersList('customers'),[tb,tr]=boughtMap('customers');return listTable({col:'customers',list:l,cols:[['Mã khách hàng'],['Tên khách hàng'],['Điện thoại'],['Nợ hiện tại','r'],['Tổng bán','r'],['Tổng bán trừ trả hàng','r']],
     sum:['','','',`<b>${fm(sum(l,c=>D.cd[c.id]))}</b>`,`<b>${fm(sum(l,c=>tb[c.id]))}</b>`,`<b>${fm(sum(l,c=>(tb[c.id]||0)-(tr[c.id]||0)))}</b>`],
     cells:c=>[h(c.code||''),h(c.name),h(c.phone||''),fm(D.cd[c.id]),fm(tb[c.id]),fm((tb[c.id]||0)-(tr[c.id]||0))],detail:c=>partnerDetail('customers',c)})}},
-'so-quy':{title:()=>'Sổ quỹ '+({'Tiền mặt':'tiền mặt','Ngân hàng':'ngân hàng','COD GHTK':'COD GHTK',all:'tổng quỹ'}[F.qAcc]),
-  filters:()=>radiosF('qAcc','Quỹ tiền',[['Tiền mặt','Tiền mặt'],['Ngân hàng','Ngân hàng'],['COD GHTK','COD GHTK (tiền GHTK đang giữ)'],['all','Tổng quỹ']])+timeF('q')+checksF('qType','Loại chứng từ',['Phiếu thu','Phiếu chi'])+selectF('qCat','Loại thu chi',[...new Set(vals('cash').map(c=>c.category).filter(Boolean))].sort(),'Chọn loại thu chi')+checksF('qSt','Trạng thái',['Đã thanh toán','Đã hủy']),
+'so-quy':{title:()=>'Sổ quỹ '+({'Tiền mặt':'tiền mặt','Ngân hàng':'ngân hàng','Ví điện tử':'ví điện tử','COD GHTK':'COD GHTK',all:'tổng quỹ'}[F.qAcc]),
+  filters:()=>radiosF('qAcc','Quỹ tiền',[['Tiền mặt','Tiền mặt'],['Ngân hàng','Ngân hàng'],['Ví điện tử','Ví điện tử'],['COD GHTK','COD GHTK (tiền GHTK đang giữ)'],['all','Tổng quỹ']])+timeF('q')+checksF('qType','Loại chứng từ',['Phiếu thu','Phiếu chi'])+selectF('qCat','Loại thu chi',[...new Set(vals('cash').map(c=>c.category).filter(Boolean))].sort(),'Chọn loại thu chi')+checksF('qSt','Trạng thái',['Đã thanh toán','Đã hủy'])+pillsF('qKq','Hạch toán kết quả kinh doanh',[['all','Tất cả'],['yes','Có'],['no','Không']])
+   +selectF('qBy','Người tạo',[...new Set(vals('cash').map(cashBy).filter(Boolean))].sort(),'Chọn người tạo')+selectF('qStaff','Nhân viên',[...new Set(vals('cash').map(cashStaff).filter(Boolean))].sort(),'Chọn nhân viên')
+   +`<div class="fs"><div class="ft">Người nộp/nhận</div><select data-f="qPT"><option value="">Tất cả</option>${['Khách hàng','Nhà cung cấp','Nhân viên','Đối tác giao hàng','Khác'].map(v=>`<option${F.qPT===v?' selected':''}>${v}</option>`).join('')}</select>${textF('qPN','Tên, mã người nộp/nhận')}${textF('qPP','Số điện thoại')}</div>`
+   +checksF('qDebt','Công nợ đối tác',['Tính vào công nợ','Không tính vào công nợ','Không có công nợ']),
   top:()=>searchBox('qQ','Theo mã phiếu')+'<span class="sp"></span>'+wbtn('new-thu','+ Phiếu thu')+wbtn('new-chi','+ Phiếu chi')+xbtn('csv-cash'),
   body:()=>{const r=rangeOf('q'),live=vals('cash').filter(c=>!c.canceled&&(F.qAcc==='all'||c.account===F.qAcc));
     const open=sum(live.filter(c=>c.date<r[0]),c=>c.type==='thu'?c.amount:-c.amount),inn=live.filter(c=>inR(c.date,r)),thu=sum(inn.filter(c=>c.type==='thu'),c=>c.amount),chi=sum(inn.filter(c=>c.type==='chi'),c=>c.amount);
@@ -1396,9 +1410,9 @@ function gotoDoc(code){if(!code)return;const find=(col,f)=>vals(col).find(x=>(x[
   else if((x=find('purchases'))){Object.assign(F,{pP:'all',pSt:['Đã nhập hàng','Đã hủy'],pSup:'',pQ:code});location.hash='#nhap-hang';setTimeout(()=>{F.exp=x.id;renderBody()})}
   else if((x=find('returns'))){Object.assign(F,{rP:'all',rSt:['Đã trả','Đã hủy'],rQ:code});location.hash='#tra-hang';setTimeout(()=>{F.exp=x.id;renderBody()})}
   else if((x=find('stocktakes'))){Object.assign(F,{kkP:'all',kkSt:['Đã cân bằng kho','Đã hủy'],kkQ:code});location.hash='#kiem-kho';setTimeout(()=>{F.exp=x.id;renderBody()})}
-  else if((x=find('cash','refCode'))){Object.assign(F,{qAcc:x.account,qP:'all',qType:[],qCat:'',qSt:['Đã thanh toán','Đã hủy'],qQ:code});location.hash='#so-quy';setTimeout(()=>{F.exp=x.id;renderBody()})}}
+  else if((x=find('cash','refCode'))){Object.assign(F,{qAcc:x.account,qP:'all',qType:[],qCat:'',qSt:['Đã thanh toán','Đã hủy'],qQ:code,qKq:'all',qBy:'',qStaff:'',qPT:'',qPN:'',qPP:'',qDebt:['Tính vào công nợ','Không tính vào công nợ','Không có công nợ']});location.hash='#so-quy';setTimeout(()=>{F.exp=x.id;renderBody()})}}
 function setF(t){const k=t.dataset.f;F[k]=t.type==='checkbox'?t.checked:t.value;F.pg=0;F.exp=null;if(t.closest('#vs'))renderSide();renderBody()}
-document.addEventListener('input',e=>{const t=e.target;if(t.closest('#pos,#modal'))return;if(t.dataset.f&&t.type==='search')setF(t)});
+document.addEventListener('input',e=>{const t=e.target;if(t.closest('#pos,#modal'))return;if(t.dataset.fq){F[t.dataset.fq]=t.value;F.pg=0;F.exp=null;renderBody();return}if(t.dataset.f&&t.type==='search')setF(t)});
 document.addEventListener('change',e=>{const t=e.target;if(t.closest('#pos,#modal'))return;
   if(t.dataset.fc){const a=F[t.dataset.fc],i=a.indexOf(t.value);if(t.checked&&i<0)a.push(t.value);if(!t.checked&&i>=0)a.splice(i,1);F.pg=0;F.exp=null;renderBody();return}
   if(t.dataset.tp){const k=t.dataset.tp;if(t.value==='custom'){F[k+'P']='custom';const r=periodRange('month');if(!F[k+'From'])F[k+'From']=r[0];if(!F[k+'To'])F[k+'To']=today()}else if(F[k+'P']==='custom')F[k+'P']='month';F.pg=0;renderSide();renderBody();return}
