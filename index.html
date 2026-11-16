@@ -75,6 +75,11 @@ a.lk{color:var(--blue);cursor:pointer;text-decoration:none}a.lk:hover{text-decor
 .fs .sub{font-size:12px;color:var(--mut);margin:-4px 0 4px}
 .fs select,.fs input[type=text],.fs input[type=date]{width:100%}
 .ftxt{width:100%;margin-top:8px;padding:7px 10px;border:1px solid #d6dbe1;border-radius:8px;font:inherit;font-size:13px;box-sizing:border-box}
+.msel{position:relative;display:flex;flex-wrap:wrap;gap:4px;align-items:center;border:1px solid #d6dbe1;border-radius:8px;padding:4px 6px;background:#fff;cursor:text;min-height:36px;box-sizing:border-box}
+.msel input{border:0;outline:0;flex:1;min-width:80px;font:inherit;font-size:13px;padding:4px 2px;background:transparent}
+.mtag{display:inline-flex;align-items:center;gap:4px;background:#e8f1fe;color:#0f62d6;border-radius:4px;padding:2px 6px;font-size:12px}.mtag b{cursor:pointer;font-weight:700}
+.mdrop{display:none;position:absolute;left:-1px;right:-1px;top:calc(100% + 4px);background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:20;max-height:260px;overflow:auto;padding:4px 0}
+.mdrop div{padding:7px 12px;font-size:13px;cursor:pointer}.mdrop div:hover{background:#f0f6ff}.mdrop .none{color:#888;cursor:default}
 .opt{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
 .trow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .tbox{flex:1;display:flex;align-items:center;justify-content:space-between;border:1px solid #d9dce1;border-radius:8px;padding:5px 9px;cursor:pointer;background:#fff;position:relative;min-height:32px}
@@ -397,8 +402,8 @@ let db=null,user=null,me=null,isOwner=false,claudeOwner=false,canWrite=true,down
 let D={st:{},avg:{},cd:{},sd:{},bal:{},orderPaid:{},purPaid:{},retPaid:{},retQty:{},ordRet:{}};
 const CHANNELS=['Zalo','TikTok Shop','Facebook','Shopee','Bán trực tiếp','Khác'];
 const STATUSES=['Mới','Đang giao','Hoàn thành','Đã hủy'];
-const ACCOUNTS=['Tiền mặt','Ngân hàng','COD GHTK'];
-const ACC_LABEL={'Tiền mặt':'Tiền mặt','Ngân hàng':'Chuyển khoản','COD GHTK':'COD GHTK'};
+const ACCOUNTS=['Tiền mặt','Ngân hàng','Ví điện tử','COD GHTK'];
+const ACC_LABEL={'Tiền mặt':'Tiền mặt','Ngân hàng':'Chuyển khoản','Ví điện tử':'Ví','COD GHTK':'COD GHTK'};
 const ACC_PRE={'Tiền mặt':'M','Ngân hàng':'NH','COD GHTK':'COD'};
 const THU_CATS=['Thu Tiền khách trả','Thu khác'];
 const CHI_CATS=['Chi QC FB','Chi QC TikTok','Chi Shopee','Chi lương','Chi mặt bằng','Chi vận chuyển','Chi nước uống','Chi khác'];
@@ -558,6 +563,7 @@ function cashForm(pre={}){
    <label>Thời gian<input id="c-date" type="date" value="${today()}"></label>
    ${moneyInput('c-amt','Giá trị',pre.amount)}
    <label>Quỹ tiền<select id="c-acc">${opts(ACCOUNTS,pre.account||'Tiền mặt')}</select></label>
+   <label>Nhân viên<select id="c-staff">${(()=>{const cur=pre.staffName||(CU&&CU.name)||'';const ns=[...new Set([...vals('appusers').filter(u=>u.status!=='disabled').map(u=>u.name),cur].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));return ns.map(n=>`<option${n===cur?' selected':''}>${h(n)}</option>`).join('')})()}</select></label>
    <label>Loại thu chi<input id="c-cat" list="dl-cats" value="${h(pre.category||(type==='thu'?'Thu khác':'Chi QC FB'))}" placeholder="Gõ hoặc chọn loại thu chi"></label>
    <label>Đối tượng<select id="c-pt"><option value="">Khác</option><option value="customer"${pt==='customer'?' selected':''}>Khách hàng</option><option value="supplier"${pt==='supplier'?' selected':''}>Nhà cung cấp</option></select></label>
    <label>Tên người ${type==='thu'?'nộp':'nhận'}<input id="c-pn" value="${h(partnerVal)}"></label>
@@ -576,7 +582,7 @@ function cashForm(pre={}){
         if(pre.partnerId!==undefined&&txt===partnerVal){pid=pre.partnerId||'';pname=pre.partnerName||''}
         else{const p=txt?await ensurePartner(col,txt):null;pid=p?p.id:'';pname=p?p.name:(ptv==='customer'?'Khách lẻ':'')}}
       const t=$('#c-type').value,acc=$('#c-acc').value;
-      const doc={type:t,account:acc,amount:amt,category:$('#c-cat').value.trim()||(t==='thu'?'Thu khác':'Chi khác'),partnerType:ptv,partnerId:pid,partnerName:pname,date:$('#c-date').value||today(),note:$('#c-note').value.trim(),kqkd:!!$('#c-kq').checked,refCode:pre.refCode||cashCode(t,acc),...stamp()};
+      const doc={type:t,account:acc,amount:amt,category:$('#c-cat').value.trim()||(t==='thu'?'Thu khác':'Chi khác'),partnerType:ptv,partnerId:pid,partnerName:pname,date:$('#c-date').value||today(),note:$('#c-note').value.trim(),staffName:($('#c-staff')&&$('#c-staff').value)||'',kqkd:!!$('#c-kq').checked,refCode:pre.refCode||cashCode(t,acc),...stamp()};
       ['orderId','purchaseId','returnId'].forEach(k=>{if(pre[k])doc[k]=pre[k]});
       await db.collection('cash').doc().set(doc);closeModal();toast('Đã lưu phiếu '+doc.refCode)})});
 }
@@ -882,7 +888,7 @@ const F={pg:0,pp:15,exp:null,xt:'info',sel:new Set(),pop:null,
   oP:'month',oFrom:'',oTo:'',oSt:['Mới','Đang giao','Hoàn thành'],oRet:['Không trả hàng','Có trả hàng'],oPay:'',oCh:'',oQ:'',
   rP:'month',rFrom:'',rTo:'',rSt:['Đã trả'],rQ:'',
   cQ:'',cDebt:'all',cTP:'all',cTFrom:'',cTTo:'',
-  qAcc:'Tiền mặt',qP:'month',qFrom:'',qTo:'',qType:[],qCat:'',qSt:['Đã thanh toán'],qQ:'',qKq:'all',qBy:'',qStaff:'',qPT:'',qPN:'',qPP:'',qDebt:['Tính vào công nợ','Không tính vào công nợ','Không có công nợ'],
+  qAcc:'Tiền mặt',qP:'month',qFrom:'',qTo:'',qType:[],qCats:[],qSt:['Đã thanh toán'],qQ:'',qKq:'all',qBy:'',qStaff:'',qPT:'',qPN:'',qPP:'',qDebt:['Tính vào công nợ','Không tính vào công nợ','Không có công nợ'],
   rpP:'month',rpFrom:'',rpTo:'',finMode:'custom',finBy:'month',finYear:new Date().getFullYear(),rpView:'report',rpMq:{},rpDay:'',
   dP:'month',dMode:'day',tP:'month',tBy:'rev',cuP:'month'};
 const rangeOf=k=>F[k+'P']==='custom'?[F[k+'From']||'0000-00-00',F[k+'To']||'9999-12-31']:periodRange(F[k+'P']);
@@ -936,7 +942,11 @@ function cashExtra(c){if(F.qKq!=='all'&&(F.qKq==='yes')!==cashKq(c))return false
  if(F.qPT&&cashPT(c)!==F.qPT)return false;const pn=F.qPN.trim().toLowerCase();if(pn){const p=c.partnerType==='customer'?S.customers.get(c.partnerId):c.partnerType==='supplier'?S.suppliers.get(c.partnerId):null;if(!((c.partnerName||'')+' '+((p&&p.code)||'')).toLowerCase().includes(pn))return false}
  const pp=F.qPP.replace(/\D/g,'');if(pp&&!cashPhone(c).replace(/\D/g,'').includes(pp))return false;return F.qDebt.includes(cashDebt(c))}
 const textF=(k,ph)=>`<input class="ftxt" type="text" data-fq="${k}" placeholder="${h(ph)}" value="${h(F[k])}">`;
-function cashList(){const r=rangeOf('q'),q=F.qQ.trim().toLowerCase();return vals('cash').filter(mine).filter(c=>inR(c.date,r)&&(F.qAcc==='all'||c.account===F.qAcc)&&(!F.qType.length||F.qType.includes(c.type==='thu'?'Phiếu thu':'Phiếu chi'))&&(!F.qCat||c.category===F.qCat)&&F.qSt.includes(c.canceled?'Đã hủy':'Đã thanh toán')&&cashExtra(c)&&(!q||((c.refCode||'')+' '+(c.partnerName||'')+' '+(c.note||'')).toLowerCase().includes(q))).sort(byTime)}
+const mselF=(k,title,ph)=>`<div class="fs"><div class="ft">${title}</div><div class="msel">${F[k].map(v=>`<span class="mtag">${h(v)}<b data-act="mseldel" data-k="${k}" data-v="${h(v)}">×</b></span>`).join('')}<input data-msel="${k}" placeholder="${F[k].length?'':h(ph)}" autocomplete="off"><div class="mdrop"></div></div></div>`;
+const MSEL={qCats:()=>[...new Set(vals('cash').map(c=>c.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'))};
+function mselDrop(inp){const k=inp.dataset.msel,q=inp.value.trim().toLowerCase(),dd=inp.parentElement.querySelector('.mdrop');const nv=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+ const l=MSEL[k]().filter(v=>!F[k].includes(v)&&(!q||nv(v).includes(nv(q))));dd.innerHTML=l.length?l.map(v=>`<div data-mpick="${h(v)}">${h(v)}</div>`).join(''):'<div class="none">Không có kết quả phù hợp</div>';dd.style.display='block'}
+function cashList(){const r=rangeOf('q'),q=F.qQ.trim().toLowerCase();return vals('cash').filter(mine).filter(c=>inR(c.date,r)&&(F.qAcc==='all'||c.account===F.qAcc)&&(!F.qType.length||F.qType.includes(c.type==='thu'?'Phiếu thu':'Phiếu chi'))&&(!F.qCats.length||F.qCats.includes(c.category))&&F.qSt.includes(c.canceled?'Đã hủy':'Đã thanh toán')&&cashExtra(c)&&(!q||((c.refCode||'')+' '+(c.partnerName||'')+' '+(c.note||'')).toLowerCase().includes(q))).sort(byTime)}
 function boughtMap(col){const m={},r={};if(col==='customers'){for(const o of S.orders.values())if(o.status!=='Đã hủy')m[o.cid]=(m[o.cid]||0)+(+o.total||0);for(const x of S.returns.values())if(!x.canceled)r[x.cid]=(r[x.cid]||0)+(+x.total||0)}else for(const p of S.purchases.values())if(!p.canceled)m[p.sid]=(m[p.sid]||0)+(+p.total||0);return[m,r]}
 
 /* ============ CHI TIẾT DÒNG ============ */
@@ -1063,7 +1073,7 @@ const R={
     sum:['','','',`<b>${fm(sum(l,c=>D.cd[c.id]))}</b>`,`<b>${fm(sum(l,c=>tb[c.id]))}</b>`,`<b>${fm(sum(l,c=>(tb[c.id]||0)-(tr[c.id]||0)))}</b>`],
     cells:c=>[h(c.code||''),h(c.name),h(c.phone||''),fm(D.cd[c.id]),fm(tb[c.id]),fm((tb[c.id]||0)-(tr[c.id]||0))],detail:c=>partnerDetail('customers',c)})}},
 'so-quy':{title:()=>'Sổ quỹ '+({'Tiền mặt':'tiền mặt','Ngân hàng':'ngân hàng','Ví điện tử':'ví điện tử','COD GHTK':'COD GHTK',all:'tổng quỹ'}[F.qAcc]),
-  filters:()=>radiosF('qAcc','Quỹ tiền',[['Tiền mặt','Tiền mặt'],['Ngân hàng','Ngân hàng'],['Ví điện tử','Ví điện tử'],['COD GHTK','COD GHTK (tiền GHTK đang giữ)'],['all','Tổng quỹ']])+timeF('q')+checksF('qType','Loại chứng từ',['Phiếu thu','Phiếu chi'])+selectF('qCat','Loại thu chi',[...new Set(vals('cash').map(c=>c.category).filter(Boolean))].sort(),'Chọn loại thu chi')+checksF('qSt','Trạng thái',['Đã thanh toán','Đã hủy'])+pillsF('qKq','Hạch toán kết quả kinh doanh',[['all','Tất cả'],['yes','Có'],['no','Không']])
+  filters:()=>radiosF('qAcc','Quỹ tiền',[['Tiền mặt','Tiền mặt'],['Ngân hàng','Ngân hàng'],['Ví điện tử','Ví điện tử'],['COD GHTK','COD GHTK (tiền GHTK đang giữ)'],['all','Tổng quỹ']])+timeF('q')+checksF('qType','Loại chứng từ',['Phiếu thu','Phiếu chi'])+mselF('qCats','Loại thu chi','Chọn loại thu chi')+checksF('qSt','Trạng thái',['Đã thanh toán','Đã hủy'])+pillsF('qKq','Hạch toán kết quả kinh doanh',[['all','Tất cả'],['yes','Có'],['no','Không']])
    +selectF('qBy','Người tạo',[...new Set(vals('cash').map(cashBy).filter(Boolean))].sort(),'Chọn người tạo')+selectF('qStaff','Nhân viên',[...new Set(vals('cash').map(cashStaff).filter(Boolean))].sort(),'Chọn nhân viên')
    +`<div class="fs"><div class="ft">Người nộp/nhận</div><select data-f="qPT"><option value="">Tất cả</option>${['Khách hàng','Nhà cung cấp','Nhân viên','Đối tác giao hàng','Khác'].map(v=>`<option${F.qPT===v?' selected':''}>${v}</option>`).join('')}</select>${textF('qPN','Tên, mã người nộp/nhận')}${textF('qPP','Số điện thoại')}</div>`
    +checksF('qDebt','Công nợ đối tác',['Tính vào công nợ','Không tính vào công nợ','Không có công nợ']),
@@ -1410,9 +1420,9 @@ function gotoDoc(code){if(!code)return;const find=(col,f)=>vals(col).find(x=>(x[
   else if((x=find('purchases'))){Object.assign(F,{pP:'all',pSt:['Đã nhập hàng','Đã hủy'],pSup:'',pQ:code});location.hash='#nhap-hang';setTimeout(()=>{F.exp=x.id;renderBody()})}
   else if((x=find('returns'))){Object.assign(F,{rP:'all',rSt:['Đã trả','Đã hủy'],rQ:code});location.hash='#tra-hang';setTimeout(()=>{F.exp=x.id;renderBody()})}
   else if((x=find('stocktakes'))){Object.assign(F,{kkP:'all',kkSt:['Đã cân bằng kho','Đã hủy'],kkQ:code});location.hash='#kiem-kho';setTimeout(()=>{F.exp=x.id;renderBody()})}
-  else if((x=find('cash','refCode'))){Object.assign(F,{qAcc:x.account,qP:'all',qType:[],qCat:'',qSt:['Đã thanh toán','Đã hủy'],qQ:code,qKq:'all',qBy:'',qStaff:'',qPT:'',qPN:'',qPP:'',qDebt:['Tính vào công nợ','Không tính vào công nợ','Không có công nợ']});location.hash='#so-quy';setTimeout(()=>{F.exp=x.id;renderBody()})}}
+  else if((x=find('cash','refCode'))){Object.assign(F,{qAcc:x.account,qP:'all',qType:[],qCats:[],qSt:['Đã thanh toán','Đã hủy'],qQ:code,qKq:'all',qBy:'',qStaff:'',qPT:'',qPN:'',qPP:'',qDebt:['Tính vào công nợ','Không tính vào công nợ','Không có công nợ']});location.hash='#so-quy';setTimeout(()=>{F.exp=x.id;renderBody()})}}
 function setF(t){const k=t.dataset.f;F[k]=t.type==='checkbox'?t.checked:t.value;F.pg=0;F.exp=null;if(t.closest('#vs'))renderSide();renderBody()}
-document.addEventListener('input',e=>{const t=e.target;if(t.closest('#pos,#modal'))return;if(t.dataset.fq){F[t.dataset.fq]=t.value;F.pg=0;F.exp=null;renderBody();return}if(t.dataset.f&&t.type==='search')setF(t)});
+document.addEventListener('input',e=>{const t=e.target;if(t.closest('#pos,#modal'))return;if(t.dataset.msel){mselDrop(t);return}if(t.dataset.fq){F[t.dataset.fq]=t.value;F.pg=0;F.exp=null;renderBody();return}if(t.dataset.f&&t.type==='search')setF(t)});
 document.addEventListener('change',e=>{const t=e.target;if(t.closest('#pos,#modal'))return;
   if(t.dataset.fc){const a=F[t.dataset.fc],i=a.indexOf(t.value);if(t.checked&&i<0)a.push(t.value);if(!t.checked&&i>=0)a.splice(i,1);F.pg=0;F.exp=null;renderBody();return}
   if(t.dataset.tp){const k=t.dataset.tp;if(t.value==='custom'){F[k+'P']='custom';const r=periodRange('month');if(!F[k+'From'])F[k+'From']=r[0];if(!F[k+'To'])F[k+'To']=today()}else if(F[k+'P']==='custom')F[k+'P']='month';F.pg=0;renderSide();renderBody();return}
@@ -1507,6 +1517,11 @@ async function init(){
     else{stopSubs();setUser(null);closePOS();route()}});
 }
 init();
+document.addEventListener('focusin',e=>{const t=e.target;if(t.dataset&&t.dataset.msel)mselDrop(t)});
+document.addEventListener('focusout',e=>{const t=e.target;if(t.dataset&&t.dataset.msel)setTimeout(()=>{const dd=t.parentElement&&t.parentElement.querySelector('.mdrop');if(dd)dd.style.display='none'},150)});
+document.addEventListener('mousedown',e=>{const p=e.target.closest('[data-mpick]');if(p){e.preventDefault();const inp=p.closest('.msel').querySelector('[data-msel]'),k=inp.dataset.msel;F[k].push(p.dataset.mpick);F.pg=0;F.exp=null;renderSide();renderBody();const n=document.querySelector(`[data-msel="${k}"]`);if(n)n.focus();return}
+ const d=e.target.closest('[data-act="mseldel"]');if(d){e.preventDefault();const a=F[d.dataset.k],i=a.indexOf(d.dataset.v);if(i>=0)a.splice(i,1);F.pg=0;F.exp=null;renderSide();renderBody();return}
+ const m=e.target.closest('.msel');if(m&&!e.target.matches('input')){e.preventDefault();m.querySelector('input').focus()}},true);
 </script>
 </body>
 </html>
