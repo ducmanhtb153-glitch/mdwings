@@ -947,10 +947,50 @@ function oSearchBox(){const n=oqN();return `<div class="search osb"><input type=
 function oqMatch(o){const t=k=>String(F[k]||'').trim().toLowerCase(),has=(s,q)=>!q||String(s||'').toLowerCase().includes(q),its=o.items||[];
  const qk=t('oQK');let ck=true;if(qk){const c=S.customers&&S.customers.get?S.customers.get(o.cid):null,ph=String((c&&c.phone)||o.phone||'').replace(/\D/g,''),qd=qk.replace(/\D/g,'');ck=has([o.ccode,o.cname,c&&c.code,c&&c.name,c&&c.phone].join(' '),qk)||(qd.length>=3&&ph.includes(qd))}
  return ck&&has(o.code,t('oQC'))&&(!t('oQI')||its.some(i=>has((i.sku||'')+' '+(i.name||''),t('oQI'))))&&has(o.orderCode||'',t('oQD'))&&has(o.note,t('oQN'))&&(!t('oQIN')||its.some(i=>has(i.note,t('oQIN'))))}
-function osbOpen(b,on){const p=b&&b.querySelector('.osb-p');if(!p)return;p.style.display=on?'block':'none';if(on){const f=p.querySelector('input');f&&f.focus()}}
-function osbGo(b){b.querySelectorAll('[data-oq]').forEach(i=>F[i.dataset.oq]=i.value);F.pg=0;F.exp=null;osbOpen(b,false);const ic=b.querySelector('[data-osb=tg]'),n=oqN();if(ic){const bd=ic.querySelector('b');if(bd)bd.remove();if(n)ic.insertAdjacentHTML('beforeend','<b style="position:absolute;top:-4px;right:-4px;background:var(--blue);color:#fff;border-radius:8px;font-size:10px;min-width:15px;height:15px;line-height:15px;text-align:center">'+n+'</b>')}renderBody()}
+function osbOpen(b,on){const p=b&&b.querySelector('.osb-p');if(!p)return;p.style.display=on?'block':'none';if(on){p.querySelectorAll('[data-oq]').forEach(i=>{const m=b.querySelector('[data-f="'+i.dataset.oq+'"]');if(m)i.value=m.value});const f=p.querySelector('input');f&&f.focus()}}
+function osbGo(b){b.querySelectorAll('[data-oq]').forEach(i=>F[i.dataset.oq]=i.value);F.pg=0;F.exp=null;osbOpen(b,false);const mi=b.querySelector('[data-f]'),mk=mi?mi.dataset.f:'',ic=b.querySelector('[data-osb=tg]'),n=[...b.querySelectorAll('[data-oq]')].filter(i=>i.dataset.oq!==mk&&i.value.trim()).length;if(mi&&mk&&b.querySelector('[data-oq="'+mk+'"]'))mi.value=F[mk]||'';if(ic){const bd=ic.querySelector('b');if(bd)bd.remove();if(n)ic.insertAdjacentHTML('beforeend','<b style="position:absolute;top:-4px;right:-4px;background:var(--blue);color:#fff;border-radius:8px;font-size:10px;min-width:15px;height:15px;line-height:15px;text-align:center">'+n+'</b>')}renderBody()}
 document.addEventListener('click',e=>{const t=e.target,b=t.closest&&t.closest('.osb');document.querySelectorAll('.osb').forEach(x=>{if(x!==b)osbOpen(x,false)});if(!b)return;const a=t.closest('[data-osb]');if(a){e.preventDefault();const v=a.dataset.osb;if(v==='tg')osbOpen(b,b.querySelector('.osb-p').style.display==='none');else if(v==='close')osbOpen(b,false);else if(v==='go')osbGo(b)}});
 document.addEventListener('keydown',e=>{const t=e.target;if(!t.closest)return;const b=t.closest('.osb');if(!b)return;if(e.key==='Escape')osbOpen(b,false);else if(e.key==='Enter'&&t.dataset.oq){e.preventDefault();osbGo(b)}});
+const ADVS={
+ rQ:{fn:'returnsList',f:[['rQ','Theo mã phiếu trả'],['rQ_hd','Theo mã hóa đơn'],['rQ_vb','Theo mã vận đơn bán'],['rQ_vt','Theo mã vận đơn trả'],['rQ_it','Theo mã, tên hàng'],['rQ_kh','Theo mã, tên, số điện thoại khách hàng'],['rQ_gc','Theo ghi chú'],['rQ_gh','Theo ghi chú hàng hóa']]},
+ prQ:{fn:'productsList',f:[['prQ','Theo mã, tên hàng'],['prQ_gc','Theo ghi chú, mô tả đặt hàng']]},
+ kkQ:{fn:'stocktakesList',f:[['kkQ','Theo mã phiếu kiểm'],['kkQ_it','Theo mã, tên hàng'],['kkQ_sr','Theo Serial/IMEI']]},
+ sQ:{fn:'partnersList',f:[['sQ','Theo mã, tên, số điện thoại'],['sQ_gc','Theo ghi chú']]},
+ pQ:{fn:'purchasesList',f:[['pQ','Theo mã phiếu nhập'],['pQ_it','Theo mã, tên hàng'],['pQ_ncc','Theo mã, tên NCC'],['pQ_gc','Theo ghi chú'],['pQ_gh','Theo ghi chú hàng hóa']]},
+ cQ:{fn:'partnersList',f:[['cQ','Theo mã, tên, số điện thoại'],['cQ_em','Theo email'],['cQ_dc','Theo địa chỉ'],['cQ_gc','Theo ghi chú'],['cQ_hd','Theo mã hóa đơn']]},
+ qQ:{fn:'cashList',f:[['qQ','Theo mã phiếu'],['qQ_gc','Theo ghi chú']]}};
+const OSB_IC='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
+const OSB_BD=n=>n?'<b style="position:absolute;top:-4px;right:-4px;background:var(--blue);color:#fff;border-radius:8px;font-size:10px;min-width:15px;height:15px;line-height:15px;text-align:center">'+n+'</b>':'';
+function advBox(mk){const c=ADVS[mk],n=c.f.filter(x=>x[0]!==mk&&String(F[x[0]]||'').trim()).length;
+ return '<div class="search osb"><input type="search" data-f="'+mk+'" value="'+h(F[mk]||'')+'" placeholder="'+c.f[0][1]+'" style="padding-right:38px"><button type="button" data-osb="tg" title="Tìm kiếm nâng cao" style="position:absolute;right:4px;top:4px;width:28px;height:24px;border:0;background:none;cursor:pointer;color:#374151;display:flex;align-items:center;justify-content:center;padding:0">'+OSB_IC+OSB_BD(n)+'</button>'
+ +'<div class="osb-p" style="display:none;position:absolute;left:0;right:0;top:36px;z-index:60;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);padding:14px 16px 0">'
+ +c.f.map(x=>'<input type="text" data-oq="'+x[0]+'" value="'+h(F[x[0]]||'')+'" placeholder="'+x[1]+'" style="display:block;width:100%;height:32px;margin-bottom:10px;padding:0 12px;border:1px solid #d1d5da;border-radius:8px">').join('')
+ +'<div style="display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #e5e7eb;margin:6px -16px 0;padding:12px 16px"><button type="button" class="btn" data-osb="close">Thu gọn</button><button type="button" class="btn pri" data-osb="go">Tìm kiếm</button></div></div></div>'}
+function advOk(mk,x){const c=ADVS[mk];for(const [k] of c.f){if(k===mk)continue;const q=String(F[k]||'').trim().toLowerCase();if(!q)continue;
+ const has=s=>String(s==null?'':s).toLowerCase().includes(q),its=x.items||[],sf=k.slice(k.indexOf('_')+1);let ok=true;
+ if(sf==='it')ok=its.some(i=>has((i.sku||'')+' '+(i.name||'')));
+ else if(sf==='gh')ok=its.some(i=>has(i.note));
+ else if(sf==='sr')ok=its.some(i=>has([i.serial,i.imei,(i.serials||[]).join(' ')].join(' ')));
+ else if(sf==='gc')ok=has([x.note,x.desc,x.description].filter(Boolean).join(' '));
+ else if(sf==='em')ok=has(x.email);
+ else if(sf==='dc')ok=has(x.address);
+ else if(sf==='vt')ok=has(x.tracking);
+ else if(sf==='vb'){const o=S.orders.get(x.orderId);ok=has(o&&o.tracking)}
+ else if(sf==='hd'){if(mk==='cQ')ok=vals('orders').some(o=>o.cid===x.id&&has(o.code));else{const o=S.orders.get(x.orderId);ok=has([x.orderCode,o&&o.code].join(' '))}}
+ else if(sf==='kh'){const cu=S.customers.get(x.cid)||{},qd=q.replace(/\D/g,''),ph=String(cu.phone||'').replace(/\D/g,'');ok=has([x.cname,cu.code,cu.name,cu.phone].join(' '))||(qd.length>=3&&ph.includes(qd))}
+ else if(sf==='ncc'){const su=(S.suppliers&&S.suppliers.get(x.sid))||{};ok=has([x.scode,x.sname,su.code,su.name].join(' '))}
+ if(!ok)return false}return true}
+{const done={};for(const [mk,c] of Object.entries(ADVS)){if(done[c.fn])continue;done[c.fn]=1;const o=window[c.fn];if(typeof o!=='function')continue;
+ window[c.fn]=function(...a){const l=o.apply(this,a),k=c.fn==='partnersList'?(a[0]==='customers'?'cQ':'sQ'):mk;return Array.isArray(l)?l.filter(x=>advOk(k,x)):l}}}
+const TG_OP=['Nhỏ hơn','Nhỏ hơn hoặc bằng','Bằng','Lớn hơn','Lớn hơn hoặc bằng'],TG_STK=['Dưới định mức tồn','Vượt định mức tồn','Còn hàng trong kho','Hết hàng trong kho'];
+const tgSel=(k,list,ph,st)=>'<select data-f="'+k+'"'+(st?' style="'+st+'"':'')+'><option value="">'+ph+'</option>'+list.map(v=>'<option'+(F[k]===v?' selected':'')+'>'+h(v)+'</option>').join('')+'</select>';
+function tgFilters(){return '<div class="fs"><div class="ft">Bảng giá</div>'+tgSel('tgPL',['Bảng giá chung'],'Bảng giá chung')+'</div>'+selectF('tgGroup','Nhóm hàng',groups(),'Chọn nhóm hàng')
+ +'<div class="fs"><div class="ft">Tồn kho</div>'+tgSel('tgStk',TG_STK,'Tất cả')+'</div>'
+ +'<div class="fs"><div class="ft">Giá bán</div>'+tgSel('tgOp',TG_OP,'Chọn điều kiện')+tgSel('tgCmp',['Giá vốn','Giá nhập cuối'],'Chọn giá so sánh','margin-top:8px')+'</div>'}
+function tgOk(p,lastIn){const s=D.st[p.id]||0,k=F.tgStk||'';
+ if(k==='Dưới định mức tồn'&&!(+p.minStock>0&&s<=+p.minStock))return false;if(k==='Vượt định mức tồn'&&!(+p.maxStock>0&&s>+p.maxStock))return false;
+ if(k==='Còn hàng trong kho'&&!(s>0))return false;if(k==='Hết hàng trong kho'&&!(s<=0))return false;
+ if(F.tgOp&&F.tgCmp){const a=+p.price||0,b=F.tgCmp==='Giá vốn'?(+D.avg[p.id]||0):(+lastIn[p.id]||0);const ok={'Nhỏ hơn':a<b,'Nhỏ hơn hoặc bằng':a<=b,'Bằng':a===b,'Lớn hơn':a>b,'Lớn hơn hoặc bằng':a>=b}[F.tgOp];if(!ok)return false}return true}
 function ordersList(){const r=rangeOf('o'),q=F.oQ.trim().toLowerCase();let payIds=null;if(F.oPay){payIds=new Set();for(const c of S.cash.values())if(c.orderId&&!c.canceled&&c.account===F.oPay)payIds.add(c.orderId)}
   return vals('orders').filter(mine).filter(o=>{const hasR=!!(D.ordRet[o.id]||[]).length;return inR(o.date,r)&&F.oSt.includes(o.status)&&F.oRet.includes(hasR?'Có trả hàng':'Không trả hàng')&&(!F.oCh||o.channel===F.oCh)&&(!F.oBy||docBy(o)===F.oBy)&&(!F.oSeller||(o.sellerName||docBy(o))===F.oSeller)&&(!payIds||payIds.has(o.id))&&oqMatch(o)&&(!q||(o.code+' '+(o.cname||'')+' '+(o.ccode||'')+' '+(o.tracking||'')+' '+(o.items||[]).map(i=>i.name+' '+i.sku).join(' ')).toLowerCase().includes(q))}).sort(byTime)}
 function purchasesList(){const r=rangeOf('p'),q=F.pQ.trim().toLowerCase();return vals('purchases').filter(mine).filter(p=>inR(p.date,r)&&F.pSt.includes(p.canceled?'Đã hủy':p.draft?'Phiếu tạm':'Đã nhập hàng')&&(!F.pSup||p.sname===F.pSup)&&(!F.pBy||docBy(p)===F.pBy)&&(!F.pImp||(p.importerName||docBy(p))===F.pImp)&&(!F.pInv.trim()||String(p.invoiceNo||'').toLowerCase().includes(F.pInv.trim().toLowerCase()))&&(!q||(p.code+' '+p.sname+' '+(p.items||[]).map(i=>i.name+' '+i.sku).join(' ')).toLowerCase().includes(q))).sort(byTime)}
@@ -1078,31 +1118,31 @@ const R={
    +timeF('prE','Dự kiến hết hàng')+timeF('prT','Thời gian tạo')+mselF('prSups','Nhà cung cấp','Chọn nhà cung cấp')+mselF('prBrands','Thương hiệu','Chọn thương hiệu')+mselF('prLocs','Vị trí','Chọn vị trí')+mselF('prKinds','Loại hàng','Chọn loại hàng')
    +pillsF('prDirect','Bán trực tiếp',[['all','Tất cả'],['yes','Có'],['no','Không']])+pillsF('prLinked','Liên kết kênh bán',[['all','Tất cả'],['yes','Có'],['no','Không']])
    +`<div class="fs"><div class="ft">Trạng thái hàng hóa</div><select data-f="prAct">${[['any','Tất cả'],['on','Hàng đang kinh doanh'],['off','Hàng ngừng kinh doanh']].map(([v,l])=>`<option value="${v}"${F.prAct===v?' selected':''}>${l}</option>`).join('')}</select></div>`,
-  top:()=>searchBox('prQ','Theo mã, tên hàng')+'<span class="sp"></span>'+wbtn('new-product','+ Tạo mới')+wbtn('import','⇩ Import file','')+xbtn('csv-stock'),
+  top:()=>advBox('prQ')+'<span class="sp"></span>'+wbtn('new-product','+ Tạo mới')+wbtn('import','⇩ Import file','')+xbtn('csv-stock'),
   body:()=>{const l=productsList(),spd=soldPerDay();return listTable({col:'products',thumb:1,list:l,cols:[['Mã hàng'],['Tên hàng'],['Giá bán','r'],...(isOwner?[['Giá vốn','r']]:[]),['Tồn kho','r'],['Thời gian tạo'],['Dự kiến hết hàng']],
     sum:['','','',...(isOwner?['']:[]),`<b>${fm(sum(l,p=>D.st[p.id]))}</b>`,'---','---'],rowCls:p=>p.hidden?'dim':'',
     cells:p=>{const s=D.st[p.id]||0,r=spd[p.id]||0;return[h(p.sku),h(p.name),fm(p.price),...(isOwner?[fm(D.avg[p.id])]:[]),`<span class="${s<=0||(+p.minStock&&s<=+p.minStock)?'red':''}">${fm(s)}</span>`,p.createdAt?fdt(ymd(new Date(p.createdAt)),p.createdAt):'',s<=0?'0 ngày':r?Math.floor(s/r)+' ngày':'---']},detail:productDetail})}},
 'thiet-lap-gia':{title:'Thiết lập giá',
-  filters:()=>selectF('tgGroup','Nhóm hàng',groups(),'Chọn nhóm hàng'),
+  filters:()=>tgFilters(),
   top:()=>searchBox('tgQ','Theo mã, tên hàng')+'<span class="sp"></span><span class="mut">Sửa giá bán trực tiếp trong bảng, bấm ra ngoài là lưu</span>',
   body:()=>{const q=F.tgQ.trim().toLowerCase(),lastIn={};for(const p of [...S.purchases.values()].filter(x=>!x.canceled).sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)))for(const i of p.items||[])lastIn[i.pid]=i.price;
-    const l=vals('products').filter(p=>!p.hidden&&(!F.tgGroup||p.group===F.tgGroup)&&(!q||(p.sku+' '+p.name).toLowerCase().includes(q))).sort((a,b)=>String(a.sku).localeCompare(String(b.sku)));
-    return listTable({col:'products',list:l,cols:[['Mã hàng'],['Tên hàng'],...(isOwner?[['Giá vốn','r']]:[]),['Giá nhập cuối','r'],['Giá chung','r']],
+    const l=vals('products').filter(p=>!p.hidden&&(!F.tgGroup||p.group===F.tgGroup)&&tgOk(p,lastIn)&&(!q||(p.sku+' '+p.name).toLowerCase().includes(q))).sort((a,b)=>String(a.sku).localeCompare(String(b.sku)));
+    return listTable({col:'products',list:l,cols:[['Mã hàng'],['Tên hàng'],...(isOwner?[['Giá vốn','r']]:[]),['Giá nhập cuối','r'],['Bảng giá chung','r']],
       cells:p=>[h(p.sku),h(p.name),...(isOwner?[fm(D.avg[p.id])]:[]),fm(lastIn[p.id]),canWrite&&can('price.update')?`<input class="price-in" data-id="${p.id}" inputmode="numeric" value="${fm(p.price)}" style="width:130px;text-align:right">`:fm(p.price)],detail:productDetail})}},
 'kiem-kho':{title:'Phiếu kiểm kho',
   filters:()=>timeF('kk','Ngày tạo')+checksF('kkSt','Trạng thái',['Phiếu tạm','Đã cân bằng kho','Đã hủy'])+selectF('kkBy','Người tạo',uniq(vals('stocktakes').map(docBy)),'Chọn người tạo'),
-  top:()=>searchBox('kkQ','Theo mã phiếu kiểm')+'<span class="sp"></span>'+wbtn('new-kk','+ Kiểm kho')+xbtn('csv-kk'),
-  body:()=>{const l=stocktakesList();return listTable({col:'stocktakes',list:l,cols:[['Mã kiểm kho'],['Thời gian'],['Ngày cân bằng'],['SL thực tế','r'],['Tổng chênh lệch','r'],['SL lệch tăng','r'],['SL lệch giảm','r'],['Ghi chú'],['Trạng thái']],rowCls:k=>k.canceled?'dim':'',
-    cells:k=>{const it=k.items||[];return[h(k.code),fdt(k.date,k.createdAt),fd(k.date),fm(sum(it,i=>i.actual)),fm(sum(it,i=>i.diff*(i.cost||0))),fm(sum(it.filter(i=>i.diff>0),i=>i.diff)),fm(sum(it.filter(i=>i.diff<0),i=>i.diff)),h(k.note||''),k.canceled?'<span class="chip r">Đã hủy</span>':'<span class="chip g">Đã cân bằng kho</span>']},detail:stocktakeDetail})}},
+  top:()=>advBox('kkQ')+'<span class="sp"></span>'+wbtn('new-kk','+ Kiểm kho')+xbtn('csv-kk'),
+  body:()=>{const l=stocktakesList();return listTable({col:'stocktakes',list:l,cols:[['Mã kiểm kho'],['Thời gian'],['Tổng thực tế','r'],['Tổng chênh lệch','r'],['SL lệch tăng','r'],['SL lệch giảm','r'],['Ngày cân bằng'],['SL thực tế','r'],['Ghi chú'],['Trạng thái']],rowCls:k=>k.canceled?'dim':'',
+    cells:k=>{const it=k.items||[];return[h(k.code),fdt(k.date,k.createdAt),fm(sum(it,i=>(+i.actual||0)*(i.cost||0))),fm(sum(it,i=>i.diff*(i.cost||0))),fm(sum(it.filter(i=>i.diff>0),i=>i.diff)),fm(sum(it.filter(i=>i.diff<0),i=>i.diff)),fd(k.date),fm(sum(it,i=>i.actual)),h(k.note||''),k.canceled?'<span class="chip r">Đã hủy</span>':'<span class="chip g">Đã cân bằng kho</span>']},detail:stocktakeDetail})}},
 'kiem-kho-moi':{full:true,body:()=>editorPage(),after:edBind},
 'nha-cung-cap':{title:'Nhà cung cấp',
   filters:()=>selectF('sGroup','Nhóm nhà cung cấp',uniq(vals('suppliers').map(s=>s.group)),'Tất cả các nhóm')+`<div class="fs tight"><div class="ft">Tổng mua</div>${rangeNF('sSMin','sSMax')}</div>`+timeF('sS','')+`<div class="fs"><div class="ft">Nợ hiện tại</div>${rangeNF('sDMin','sDMax')}</div>`+pillsF('sAct','Trạng thái',[['all','Tất cả'],['on','Đang hoạt động'],['off','Ngừng hoạt động']]),
-  top:()=>searchBox('sQ','Theo mã, tên, số điện thoại')+'<span class="sp"></span>'+wbtn('new-supplier','+ Nhà cung cấp')+xbtn('csv-suppliers'),
-  body:()=>{const l=partnersList('suppliers'),[tb]=boughtMap('suppliers');return listTable({col:'suppliers',list:l,cols:[['Mã nhà cung cấp'],['Tên nhà cung cấp'],['Điện thoại'],['Nợ cần trả hiện tại','r'],['Tổng mua','r']],
-    sum:['','','',`<b>${fm(sum(l,c=>D.sd[c.id]))}</b>`,`<b>${fm(sum(l,c=>tb[c.id]))}</b>`],cells:c=>[h(c.code||''),h(c.name),h(c.phone||''),fm(D.sd[c.id]),fm(tb[c.id])],detail:c=>partnerDetail('suppliers',c)})}},
+  top:()=>advBox('sQ')+'<span class="sp"></span>'+wbtn('new-supplier','+ Nhà cung cấp')+xbtn('csv-suppliers'),
+  body:()=>{const l=partnersList('suppliers'),[tb]=boughtMap('suppliers');return listTable({col:'suppliers',list:l,cols:[['Mã nhà cung cấp'],['Tên nhà cung cấp'],['Điện thoại'],['Email'],['Nợ cần trả hiện tại','r'],['Tổng mua','r']],
+    sum:['','','','',`<b>${fm(sum(l,c=>D.sd[c.id]))}</b>`,`<b>${fm(sum(l,c=>tb[c.id]))}</b>`],cells:c=>[h(c.code||''),h(c.name),h(c.phone||''),h(c.email||''),fm(D.sd[c.id]),fm(tb[c.id])],detail:c=>partnerDetail('suppliers',c)})}},
 'nhap-hang':{title:'Nhập hàng',
   filters:()=>checksF('pSt','Trạng thái',['Phiếu tạm','Đã nhập hàng','Đã hủy'])+timeF('p')+selectF('pBy','Người tạo',uniq(vals('purchases').map(docBy)),'Chọn người tạo')+`<div class="fs"><div class="ft">Số hóa đơn đầu vào</div>${textF('pInv','Theo số hóa đơn đầu vào')}</div>`+selectF('pImp','Người nhập',uniq(vals('purchases').map(p=>p.importerName||docBy(p))),'Chọn người nhập')+selectF('pSup','Nhà cung cấp',[...new Set(vals('suppliers').map(s=>s.name))],'Chọn nhà cung cấp'),
-  top:()=>searchBox('pQ','Theo mã phiếu nhập')+'<span class="sp"></span>'+wbtn('new-purchase','+ Nhập hàng')+xbtn('csv-purchases'),
+  top:()=>advBox('pQ')+'<span class="sp"></span>'+wbtn('new-purchase','+ Nhập hàng')+xbtn('csv-purchases'),
   body:()=>{const l=purchasesList(),live=l.filter(p=>!p.canceled);return listTable({col:'purchases',list:l,cols:[['Mã nhập hàng'],['Thời gian'],['Mã NCC'],['Nhà cung cấp'],['Cần trả NCC','r'],['Trạng thái']],
     sum:['','','','',`<b>${fm(sum(live,p=>p.total))}</b>`,''],rowCls:p=>p.canceled?'dim':'',
     cells:p=>[h(p.code),fdt(p.date,p.createdAt),h(p.scode||(S.suppliers.get(p.sid)||{}).code||''),h(p.sname),fm(p.total),p.canceled?'<span class="chip r">Đã hủy</span>':'<span class="chip g">Đã nhập hàng</span>'],detail:purchaseDetail})}},
@@ -1118,13 +1158,13 @@ const R={
    +mselF('rShip','Trạng thái giao hàng','Chọn trạng thái')+mselF('rCarrier','Đối tác giao hàng','Chọn đối tác giao hàng')+timeF('r')
    +selectF('rBy','Người tạo',uniq(vals('returns').map(retBy)),'Chọn người tạo')+selectF('rRecv','Người nhận trả',uniq(vals('returns').map(retRecv)),'Chọn người nhận trả')
    +mselF('rCh','Kênh bán','Chọn kênh bán')+mselF('rOther','Loại thu khác','Chọn loại thu khác'),
-  top:()=>searchBox('rQ','Theo mã phiếu trả')+'<span class="sp"></span>'+wbtn('new-return','+ Trả hàng')+xbtn('csv-returns'),
-  body:()=>{const l=returnsList(),live=l.filter(r=>!r.canceled);return listTable({col:'returns',list:l,cols:[['Mã trả hàng'],['Người bán'],['Thời gian'],['Mã KH'],['Khách hàng'],['Tổng tiền hàng','r'],['Cần trả khách','r'],['Đã trả khách','r'],['Trạng thái']],
-    sum:['','','','','',`<b>${fm(sum(live,r=>r.total))}</b>`,`<b>${fm(sum(live,r=>r.total))}</b>`,`<b>${fm(sum(live,r=>D.retPaid[r.id]))}</b>`,''],rowCls:r=>r.canceled?'dim':'',
-    cells:r=>[h(r.code),who(r.createdBy),fdt(r.date,r.createdAt),h((S.customers.get(r.cid)||{}).code||''),h(r.cname),fm(r.total),fm(r.total),fm(D.retPaid[r.id]),r.canceled?'<span class="chip r">Đã hủy</span>':'<span class="chip g">Đã trả</span>'],detail:returnDetail})}},
+  top:()=>advBox('rQ')+'<span class="sp"></span>'+wbtn('new-return','+ Trả hàng')+xbtn('csv-returns'),
+  body:()=>{const l=returnsList(),live=l.filter(r=>!r.canceled);return listTable({col:'returns',list:l,cols:[['Mã trả hàng'],['Người bán'],['Thời gian'],['Mã KH'],['Khách hàng'],['Tổng tiền hàng','r'],['Cần trả khách','r'],['Đã trả khách','r'],['Trạng thái'],['Trạng thái giao hàng']],
+    sum:['','','','','',`<b>${fm(sum(live,r=>r.total))}</b>`,`<b>${fm(sum(live,r=>r.total))}</b>`,`<b>${fm(sum(live,r=>D.retPaid[r.id]))}</b>`,'',''],rowCls:r=>r.canceled?'dim':'',
+    cells:r=>[h(r.code),who(r.createdBy),fdt(r.date,r.createdAt),h((S.customers.get(r.cid)||{}).code||''),h(r.cname),fm(r.total),fm(r.total),fm(D.retPaid[r.id]),r.canceled?'<span class="chip r">Đã hủy</span>':'<span class="chip g">Đã trả</span>',h(r.shipStatus||'')],detail:returnDetail})}},
 'khach-hang':{title:'Khách hàng',
   filters:()=>selectF('cGroup','Nhóm khách hàng',uniq(vals('customers').map(c=>c.group)),'Tất cả các nhóm')+timeF('cT','Ngày tạo')+selectF('cBy','Người tạo',uniq(vals('customers').map(docBy)),'Chọn người tạo')+pillsF('cKind','Loại khách hàng',[['all','Tất cả'],['Cá nhân','Cá nhân'],['Công ty','Công ty']])+pillsF('cSex','Giới tính',[['all','Tất cả'],['Nam','Nam'],['Nữ','Nữ']])+timeF('cB','Sinh nhật')+timeF('cL','Ngày giao dịch cuối')+`<div class="fs tight"><div class="ft">Tổng bán</div>${rangeNF('cSMin','cSMax')}</div>`+timeF('cS','')+`<div class="fs"><div class="ft">Nợ hiện tại</div>${rangeNF('cDMin','cDMax')}</div>`+mselF('cArea','Khu vực giao hàng','Chọn Tỉnh/TP - Quận/Huyện')+pillsF('cAct','Trạng thái',[['all','Tất cả'],['on','Đang hoạt động'],['off','Ngừng hoạt động']]),
-  top:()=>searchBox('cQ','Theo mã, tên, số điện thoại')+'<span class="sp"></span>'+wbtn('new-customer','+ Khách hàng')+xbtn('csv-customers'),
+  top:()=>advBox('cQ')+'<span class="sp"></span>'+wbtn('new-customer','+ Khách hàng')+xbtn('csv-customers'),
   body:()=>{const l=partnersList('customers'),[tb,tr]=boughtMap('customers');return listTable({col:'customers',list:l,cols:[['Mã khách hàng'],['Tên khách hàng'],['Điện thoại'],['Nợ hiện tại','r'],['Tổng bán','r'],['Tổng bán trừ trả hàng','r']],
     sum:['','','',`<b>${fm(sum(l,c=>D.cd[c.id]))}</b>`,`<b>${fm(sum(l,c=>tb[c.id]))}</b>`,`<b>${fm(sum(l,c=>(tb[c.id]||0)-(tr[c.id]||0)))}</b>`],
     cells:c=>[h(c.code||''),h(c.name),h(c.phone||''),fm(D.cd[c.id]),fm(tb[c.id]),fm((tb[c.id]||0)-(tr[c.id]||0))],detail:c=>partnerDetail('customers',c)})}},
@@ -1133,7 +1173,7 @@ const R={
    +selectF('qBy','Người tạo',[...new Set(vals('cash').map(cashBy).filter(Boolean))].sort(),'Chọn người tạo')+selectF('qStaff','Nhân viên',[...new Set(vals('cash').map(cashStaff).filter(Boolean))].sort(),'Chọn nhân viên')
    +`<div class="fs"><div class="ft">Người nộp/nhận</div><select data-f="qPT"><option value="">Tất cả</option>${['Khách hàng','Nhà cung cấp','Nhân viên','Đối tác giao hàng','Khác'].map(v=>`<option${F.qPT===v?' selected':''}>${v}</option>`).join('')}</select>${textF('qPN','Tên, mã người nộp/nhận')}${textF('qPP','Số điện thoại')}</div>`
    +checksF('qDebt','Công nợ đối tác',['Tính vào công nợ','Không tính vào công nợ','Không có công nợ']),
-  top:()=>searchBox('qQ','Theo mã phiếu')+'<span class="sp"></span>'+wbtn('new-thu','+ Phiếu thu')+wbtn('new-chi','+ Phiếu chi')+xbtn('csv-cash'),
+  top:()=>advBox('qQ')+'<span class="sp"></span>'+wbtn('new-thu','+ Phiếu thu')+wbtn('new-chi','+ Phiếu chi')+xbtn('csv-cash'),
   body:()=>{const r=rangeOf('q'),live=vals('cash').filter(c=>!c.canceled&&(F.qAcc==='all'||c.account===F.qAcc));
     const open=sum(live.filter(c=>c.date<r[0]),c=>c.type==='thu'?c.amount:-c.amount),inn=live.filter(c=>inR(c.date,r)),thu=sum(inn.filter(c=>c.type==='thu'),c=>c.amount),chi=sum(inn.filter(c=>c.type==='chi'),c=>c.amount);
     return `<div class="qsum"><div><div class="k">Quỹ đầu kỳ</div><div class="v">${fm(open)}</div></div><div><div class="k">Tổng thu</div><div class="v bl">${fm(thu)}</div></div><div><div class="k">Tổng chi</div><div class="v red">-${fm(chi)}</div></div><div><div class="k">Tồn quỹ</div><div class="v grn">${fm(open+thu-chi)}</div></div></div>`
