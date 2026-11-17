@@ -1457,7 +1457,7 @@ let pend=false;function schedule(){if(pend)return;pend=true;requestAnimationFram
   const ae=document.activeElement;const typing=ae&&ae.closest&&ae.closest('#vs,#vb')&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName);
   if(!typing){renderSide();renderBody()}
   if(!$('#pos').classList.contains('hidden')&&!(ae&&ae.closest&&ae.closest('#pos')))renderCart()})}
-function route(){const k=(location.hash||'').slice(1);tab=R[k]?k:'tong-quan';if(CU&&tab==='tong-quan'&&!routeOk(tab)){const f=firstAllowed();if(f)tab=f}F.pg=0;F.exp=null;F.xt='info';F.sel=new Set();F.pop=null;
+function route(){const k=(location.hash||'').slice(1);const _pt=tab;tab=R[k]?k:'tong-quan';if(tab==='bc-tai-chinh'&&_pt!=='bc-tai-chinh'){F.rpP='month';F.rpFrom='';F.rpTo='';F.finMode='custom';F.finBy='month';F.finYear=new Date().getFullYear()}if(CU&&tab==='tong-quan'&&!routeOk(tab)){const f=firstAllowed();if(f)tab=f}F.pg=0;F.exp=null;F.xt='info';F.sel=new Set();F.pop=null;
   if(tab==='nhap-hang-moi'&&(!ED||ED.mode!=='nh'))startEditor('nh');if(tab==='kiem-kho-moi'&&(!ED||ED.mode!=='kk'))startEditor('kk');
   renderTab();window.scrollTo(0,0)}
 window.addEventListener('hashchange',route);
