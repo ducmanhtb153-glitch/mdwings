@@ -1525,6 +1525,7 @@ function route(){const k=(location.hash||'').slice(1);const _pt=tab;tab=R[k]?k:'
   if(tab==='nhap-hang-moi'&&(!ED||ED.mode!=='nh'))startEditor('nh');if(tab==='kiem-kho-moi'&&(!ED||ED.mode!=='kk'))startEditor('kk');
   renderTab();window.scrollTo(0,0)}
 window.addEventListener('hashchange',route);
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||a.closest('#vb,#vh,#modal,#pos'))return;const k=a.getAttribute('href').slice(1);if(!R[k])return;Object.keys(F).forEach(x=>{if(/^[a-z]{1,2}Q[A-Z]{0,3}$/.test(x)&&typeof F[x]==='string')F[x]=''});F._ax=null;if(location.hash.slice(1)===k){e.preventDefault();route()}},true);
 function gotoDoc(code){if(!code)return;const find=(col,f)=>vals(col).find(x=>(x[f||'code'])===code);let x;
   if((x=find('orders'))){Object.assign(F,{oP:'all',oSt:[...STATUSES],oRet:['Không trả hàng','Có trả hàng'],oCh:'',oPay:'',oQ:code});location.hash='#hoa-don';setTimeout(()=>{F.exp=x.id;renderBody()})}
   else if((x=find('purchases'))){Object.assign(F,{pP:'all',pSt:['Phiếu tạm','Đã nhập hàng','Đã hủy'],pSup:'',pBy:'',pImp:'',pInv:'',pQ:code});location.hash='#nhap-hang';setTimeout(()=>{F.exp=x.id;renderBody()})}
