@@ -917,6 +917,7 @@ const val=v=>v===''||v==null?['Chưa có',1]:[h(v),0];
 const fv=(l,v)=>{const [a,b]=val(v);return fld(l,a,b)};
 const inner=(cols,rows)=>`<div style="overflow-x:auto"><table class="inner"><thead><tr>${cols.map(c=>`<th class="${c[1]||''}">${c[0]}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${r.map((v,i)=>`<td class="${cols[i][1]||''}">${v}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${cols.length}">${empty('Chưa có dữ liệu')}</td></tr>`}</tbody></table></div>`;
 function listTable({cols,sum:sr,list,cells,detail,rowCls,col,thumb}){
+  {const sg=Object.keys(F).filter(k=>/^[a-z]{1,2}Q[A-Z]{0,3}$/.test(k)&&typeof F[k]==='string'&&F[k].trim()).map(k=>k+':'+F[k].trim()).join(';');if(list.length===1&&sg){const sig=list[0].id+'|'+sg;if(F._ax!==sig){F._ax=sig;F.exp=list[0].id;F.xt='info'}}}
   const pages=Math.max(1,Math.ceil(list.length/F.pp));if(F.pg>=pages)F.pg=pages-1;if(F.pg<0)F.pg=0;
   const rows=list.slice(F.pg*F.pp,(F.pg+1)*F.pp),n=cols.length+2+(thumb?1:0);
   const allSel=rows.length&&rows.every(x=>F.sel.has(x.id));
